@@ -34,3 +34,8 @@ Schedule grid, Compete, Log game, New game, game screen, real map, real data, de
 
 ## Owner feedback
 _(to fill in after review)_
+
+## Screens (Chromium, 402×874)
+![Home](01-screens/home.png)
+![Explore](01-screens/explore.png)
+![Me and Settings](01-screens/me-settings.png)

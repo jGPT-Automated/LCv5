@@ -51,7 +51,9 @@
     "typecheck": "tsc --noEmit",
     "check:tokens": "node scripts/check-tokens.mjs",
     "export:web": "expo export --platform web",
-    "check": "npm run typecheck && npm run check:tokens"
+    "check": "npm run typecheck && npm run check:tokens && npm run check:design",
+    "check:design": "node scripts/check-design.mjs",
+    "export:ios": "expo export --platform ios --output-dir dist-ios"
   },
   "private": true
 }

@@ -3,7 +3,7 @@ import { Pressable } from 'react-native';
 
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Text } from '@/components/ui/Text';
-import { color, layout, space } from '@/theme';
+import { color, size, space } from '@/theme';
 
 const TABS: { name: string; href: '/' | '/schedule' | '/compete' | '/explore' | '/me'; label: string; icon: IconName }[] = [
   { name: 'index', href: '/', label: 'Home', icon: 'home' },
@@ -39,7 +39,7 @@ export function AppTabs() {
           left: 0,
           right: 0,
           bottom: 0,
-          height: layout.tabBarHeight,
+          height: size.tabBar,
           paddingTop: space.ml,
           backgroundColor: color.tabBar,
           borderTopWidth: 1,

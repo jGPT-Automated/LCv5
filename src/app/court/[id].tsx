@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from 'expo-router';
 
-import { HomeScreen } from '@/features/home/HomeScreen';
+import { HomeScreen } from '@/screens/home/HomeScreen';
 import { courtIds, type CourtId } from '@/mock/data';
 
 /** Court page: the Home layout for a single court, opened from Explore. */

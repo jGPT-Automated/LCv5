@@ -43,3 +43,27 @@ export const tracking = {
   widest: 0.16,
 } as const;
 export type Tracking = keyof typeof tracking;
+
+type TextStyleDef = { variant: 'body' | 'display' | 'label'; size: FontSize; weight?: Weight; track?: Tracking; lineHeight?: number };
+
+/** Named text styles. Screens pick one of these by name (docs/DESIGN.md, Type). */
+export const textStyle = {
+  pageTitle: { variant: 'display', size: 24, track: 'title' },
+  hero: { variant: 'display', size: 28, track: 'tight', lineHeight: 0.95 },
+  sheetTitle: { variant: 'display', size: 30, track: 'tight', lineHeight: 0.95 },
+  cardTitle: { variant: 'display', size: 22, lineHeight: 1 },
+  itemTitle: { variant: 'display', size: 15 },
+  statXL: { variant: 'display', size: 46, track: 'tightest', lineHeight: 0.85 },
+  statL: { variant: 'display', size: 26, track: 'tight' },
+  stat: { variant: 'display', size: 20, track: 'tight' },
+  statS: { variant: 'display', size: 16, track: 'tight' },
+  rowTitle: { variant: 'body', size: 13, weight: 'semi' },
+  body: { variant: 'body', size: 13, weight: 'medium' },
+  caption: { variant: 'body', size: 12, weight: 'semi' },
+  meta: { variant: 'body', size: 11, weight: 'medium' },
+  rowSub: { variant: 'body', size: 10.5, weight: 'medium' },
+  section: { variant: 'label', size: 10 },
+  eyebrow: { variant: 'label', size: 9 },
+  micro: { variant: 'label', size: 7.5 },
+} as const satisfies Record<string, TextStyleDef>;
+export type TextStyleName = keyof typeof textStyle;

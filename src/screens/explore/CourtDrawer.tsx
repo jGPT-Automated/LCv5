@@ -8,10 +8,11 @@ import { BookmarkButton, Button, SportTag } from '@/components/ui/controls';
 import { Glow } from '@/components/ui/Glow';
 import { useOverlay } from '@/components/ui/Overlay';
 import { Sheet } from '@/components/ui/Sheet';
+import { StatStrip } from '@/components/ui/surfaces';
 import { Text } from '@/components/ui/Text';
 import { courts, HOURS, NOW_HOUR, type CourtId } from '@/mock/data';
 import { useApp } from '@/state/AppState';
-import { color, radius, space, sport } from '@/theme';
+import { color, size, space, sport } from '@/theme';
 
 /** Peek drawer for a court: counts, today's bars, who's on court, check in. */
 export function CourtDrawer({ id, onClose }: { id: CourtId | null; onClose: () => void }) {
@@ -34,66 +35,57 @@ function Body({ cid, onClose }: { cid: CourtId; onClose: () => void }) {
   const here = checkedAt === cid;
   const people = d.livePeople(cid).map(d.view(cid));
   const names = people.map((p) => (p.me ? 'You' : p.n));
-  const metrics: [string, number, string][] = [
-    ['Live now', n, n ? color.orangeInk : color.ink],
-    ['Locals', ct.locals, color.ink],
-    ['Games this week', d.gamesThisWeek(cid), color.ink],
-  ];
-  const labels = Array.from({ length: HOURS }, (_, i) => (i === NOW_HOUR ? 'NOW' : i === 0 ? '7A' : i === 16 ? '11P' : ''));
   return (
     <View style={{ gap: space.xxl }}>
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: space.l }}>
         <View style={{ flex: 1, minWidth: 0, gap: space.m }}>
           <SportTag sport={ct.sport} />
-          <Text variant="display" size={30} track="tight" lineHeight={0.95}>
+          <Text t="sheetTitle">
             {ct.name}
-            <Text variant="display" size={30} tint={color.orange}>
+            <Text t="sheetTitle" tint={color.orange}>
               .
             </Text>
           </Text>
-          <Text size={11.5} weight="medium" tint={color.muted}>
+          <Text t="meta" tint={color.muted}>
             {ct.area}
           </Text>
         </View>
-        <BookmarkButton saved={mine.includes(cid)} onPress={() => toggleSaved(cid)} size={40} iconSize={16} r={radius.tile} />
+        <BookmarkButton saved={mine.includes(cid)} onPress={() => toggleSaved(cid)} />
       </View>
-
-      <View style={{ flexDirection: 'row', borderRadius: radius.panel, borderWidth: 1, borderColor: color.border, backgroundColor: color.inset }}>
-        {metrics.map(([k, v, ink], j) => (
-          <View key={k} style={{ flex: 1, padding: space.l, gap: space.xs, borderLeftWidth: j ? 1 : 0, borderLeftColor: color.divider }}>
-            <Text variant="display" size={26} track="tight" tint={ink}>
-              {String(v)}
-            </Text>
-            <Text variant="label" size={7.5} tint={color.muted}>
-              {k}
-            </Text>
-          </View>
-        ))}
-      </View>
-
-      <HourBars counts={d.todayCounts(cid)} height={34} labels={labels} future={color.futureBarDrawer} />
-
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.l, minHeight: 30 }}>
+      <StatStrip
+        framed
+        align="start"
+        items={[
+          { value: n, label: 'Live now', tint: n ? color.orangeInk : color.ink },
+          { value: ct.locals, label: 'Locals' },
+          { value: d.gamesThisWeek(cid), label: 'Games this week' },
+        ]}
+      />
+      <HourBars
+        counts={d.todayCounts(cid)}
+        height={size.barChartSm}
+        labels={Array.from({ length: HOURS }, (_, i) => (i === NOW_HOUR ? 'NOW' : i === 0 ? '7A' : i === 16 ? '11P' : ''))}
+        future={color.futureBarDrawer}
+      />
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.l, minHeight: size.compact }}>
         {people.length ? <AvatarStack people={people} outline={color.sheet} max={4} /> : null}
-        <Text size={12} tint={color.inkSub} numberOfLines={1} style={{ flex: 1 }}>
+        <Text t="caption" tint={color.inkSub} numberOfLines={1} style={{ flex: 1 }}>
           {people.length ? names.slice(0, 3).join(', ') + (names.length > 3 ? ' +' + (names.length - 3) : '') + ' on court' : 'Nobody on court yet'}
         </Text>
       </View>
-
       <View style={{ flexDirection: 'row', gap: space.m }}>
         <Button
           label={here ? '✓ Checked in' : 'Check in'}
           kind={here ? 'here' : 'orange'}
-          height={50}
-          size={11}
+          size="large"
           grow
+          feedback="commit"
           onPress={() => (here ? checkOut() : checkIn(cid))}
         />
         <Button
           label="Court page ›"
           kind="ghost"
-          height={50}
-          size={11}
+          size="large"
           grow
           onPress={() => {
             onClose();

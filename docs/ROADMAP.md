@@ -6,8 +6,9 @@ the owner says so.
 
 | # | Chunk | Status | Record |
 |---|-------|--------|--------|
-| 1 | Foundation + first screens: SDK 58 starter, tokens, shared pieces, tab shell, Home (Today / Week / Players), Explore list + map + drawer, court page, Me (Activity / Friends / Inbox), Settings. Web preview on Vercel. | In review | [01-foundation](chunks/01-foundation.md) |
-| 2 | Owner review fixes from chunk 1 (Explore card, add-to-list flow, anything else flagged). | Planned | |
+| 1 | Foundation + first screens: SDK 58 starter, tokens, shared pieces, tab shell, Home, Explore, court page, Me, Settings. | Approved (merged, PR #1) | [01-foundation](chunks/01-foundation.md) |
+| 2 | Design system: DESIGN.md, one page frame, shared components with intentional motion, design check in CI, every screen migrated. | In review | [02-design-system](chunks/02-design-system.md) |
+| 2b | Explore card redesign and the add-a-court-to-list flow. | Planned | |
 | 3 | Schedule: week grid, tap/drag multi-select, New game sheet. | Planned | |
 | 4 | Compete: rank card, tiers, leaderboard, Log game sheet. | Planned (owner may design this one) | |
 | 5 | Game card and game screen. | Planned | |

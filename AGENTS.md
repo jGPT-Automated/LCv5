@@ -42,19 +42,32 @@ Docs: https://docs.expo.dev/eas/index.md
 
 ## LocalCheck v5 project rules
 
-These override anything above where they conflict.
+These override anything above where they conflict. Read `docs/DESIGN.md` before writing any UI.
 
-1. **UI only, no backend.** This repo has no Supabase, no API calls, no EAS updates and no connection to the LocalCheck_Expo repo or its services. All data is mock data in `src/mock/`. Do not add network calls, keys or env vars until the owner explicitly says so.
-2. **Tokens only.** Colors, spacing, radius and type sizes come from `src/theme`. `npm run check:tokens` fails on raw values. Add a token before adding a one-off value, and log it in `docs/DECISIONS.md`.
-3. **Use the shared pieces.** `Text`, `Button`, `Segmented`, `Avatar`, `Sheet`, `Glow`, `PageHeader`, `Screen` live in `src/components`. Don't restyle them inline per screen.
-4. **One chunk per PR.** Each PR updates `docs/ROADMAP.md` (status), its `docs/chunks/NN-*.md` file, and `docs/DECISIONS.md` for any choice made.
-5. **Before pushing:** `npm run check` (typecheck + token check) and `npm run export:web` must pass.
-6. **Copy rules:** plain language, no emoji, no exclamation marks, first names only for other players.
+### How work happens
+1. **Chunks, signed off first.** Propose a chunk (what, why, files, how it will be checked) and wait for the owner's yes before building. One chunk per PR.
+2. **Questions get answers, not actions.** When the owner asks a question, answer it with sources. Don't start work in the same turn unless asked.
+3. **Verify, don't assume.** Check claims against code, docs or a run, and cite the source. If something is unverified, say so plainly.
+4. **Sub-agents run on Haiku or Sonnet, set explicitly** (`model: "haiku"` or `model: "sonnet"`). Never leave the model unset. Give them a narrow, read-only brief.
+
+### How UI is built
+5. **Screens only compose shared components.** No header, scroll frame, font, radius or size of their own. `Page` owns the header; it never scrolls.
+6. **Missing a component? Build it in `src/components/`,** following "Adding or changing a component" in `docs/DESIGN.md`. Never inline in a screen.
+7. **Motion lives in components,** on the moments listed in `docs/DESIGN.md` Motion. Routine taps get an instant dim.
+8. **Tokens only.** Values come from `src/theme`.
+9. **Copy:** plain language, no emoji, no exclamation marks, first names only for other players.
+
+### Data
+10. **No backend yet.** Data comes from `src/mock/` until the owner explicitly approves wiring. No network calls, keys or env vars.
+
+### Before pushing
+11. `npm run check` (typecheck, token check, design check) must pass. CI runs it on every PR; a failing check marks the PR red.
+12. Update `docs/ROADMAP.md`, the chunk record in `docs/chunks/`, and `docs/DECISIONS.md` for any decision.
 
 ## Layout
 
-- `src/app/` routes only (Expo Router). Screens live in `src/features/<area>/`.
-- `src/components/ui/` shared primitives, `src/components/nav/` header, tab bar, page frame.
-- `src/mock/` mock data and pure helpers that derive what screens show.
-- `src/state/AppState.tsx` in-memory app state (resets on reload).
-- `docs/` roadmap, decisions, per-chunk records.
+- `src/app/` routes only (Expo Router); each renders a screen from `src/screens/`.
+- `src/screens/<area>/` screen bodies and their private pieces.
+- `src/components/layout/` page frame, pager, tab bar. `ui/` shared primitives. `court/` court and player displays.
+- `src/theme/` tokens. `src/state/` app state. `src/mock/` sample data and helpers.
+- `docs/` design system, roadmap, decisions, chunk records.

@@ -1,33 +1,67 @@
-import type { ReactNode } from 'react';
-import { Pressable, View, type ViewStyle } from 'react-native';
+import { useEffect, useState, type ReactNode } from 'react';
+import { Pressable, View, type LayoutChangeEvent, type ViewStyle } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
-import { color, radius, space, sport as sportTokens, type FontSize } from '@/theme';
+import { haptic } from '@/lib/haptics';
+import { color, PRESS_SCALE, radius, space, spring, sport as sportTokens, type FontSize } from '@/theme';
 
 import { Icon } from './Icon';
 import { Text } from './Text';
 
-/** Shared press feedback: a quick dim, no ripple. */
+const APressable = Animated.createAnimatedComponent(Pressable);
+
+type Feedback = keyof typeof haptic;
+
+/**
+ * Every tappable surface. Scales to 0.96 on press with a spring that
+ * retargets if the finger lifts mid-press; disabled surfaces never scale.
+ * `feedback` adds a haptic on press; `still` turns the scale off.
+ */
 export function Tap({
   onPress,
   style,
   children,
   disabled,
   hitSlop,
+  feedback,
+  still,
+  label,
+  role = 'button',
 }: {
   onPress?: () => void;
   style?: ViewStyle | ViewStyle[];
   children: ReactNode;
   disabled?: boolean;
   hitSlop?: number;
+  feedback?: Feedback;
+  still?: boolean;
+  /** Accessibility label when the content isn't readable text. */
+  label?: string;
+  role?: 'button' | 'link' | 'tab' | 'switch' | 'radio';
 }) {
+  const s = useSharedValue(1);
+  const anim = useAnimatedStyle(() => ({ transform: [{ scale: s.value }] }));
+  const scale = !still && !disabled && !!onPress;
   return (
-    <Pressable
-      onPress={onPress}
+    <APressable
+      onPress={
+        onPress
+          ? () => {
+              if (feedback) haptic[feedback]();
+              onPress();
+            }
+          : undefined
+      }
+      onPressIn={scale ? () => (s.value = withSpring(PRESS_SCALE, spring.press)) : undefined}
+      onPressOut={scale ? () => (s.value = withSpring(1, spring.press)) : undefined}
       disabled={disabled}
       hitSlop={hitSlop}
-      style={({ pressed }) => [style as ViewStyle, pressed && !disabled ? { opacity: 0.7 } : null]}>
+      accessibilityRole={onPress ? role : undefined}
+      accessibilityLabel={label}
+      accessibilityState={disabled ? { disabled: true } : undefined}
+      style={[style as ViewStyle, anim]}>
       {children}
-    </Pressable>
+    </APressable>
   );
 }
 
@@ -53,9 +87,11 @@ export function Button({
   icon,
   grow,
   padX = space.xl,
+  feedback = 'tap',
 }: {
   label: string;
   kind: ButtonKind;
+  feedback?: Feedback;
   height?: number;
   size?: FontSize;
   onPress?: () => void;
@@ -69,6 +105,7 @@ export function Button({
     <Tap
       onPress={onPress}
       disabled={disabled}
+      feedback={feedback}
       style={{
         height,
         flex: grow ? 1 : undefined,
@@ -92,11 +129,25 @@ export function Button({
 }
 
 /** Square outlined icon button, e.g. the bookmark. */
-export function IconButton({ children, onPress, size = 34, r = radius.control }: { children: ReactNode; onPress?: () => void; size?: number; r?: number }) {
+export function IconButton({
+  children,
+  onPress,
+  size = 34,
+  r = radius.control,
+  label,
+}: {
+  children: ReactNode;
+  onPress?: () => void;
+  size?: number;
+  r?: number;
+  label?: string;
+}) {
   return (
     <Tap
       onPress={onPress}
       hitSlop={6}
+      label={label}
+      feedback="tap"
       style={{ width: size, height: size, borderRadius: r, borderWidth: 1, borderColor: color.control, alignItems: 'center', justifyContent: 'center' }}>
       {children}
     </Tap>
@@ -117,7 +168,7 @@ export function BookmarkButton({
   r?: number;
 }) {
   return (
-    <IconButton onPress={onPress} size={size} r={r}>
+    <IconButton onPress={onPress} size={size} r={r} label={saved ? 'Remove from my courts' : 'Save to my courts'}>
       <Icon name="bookmark" size={iconSize} fill={saved ? color.ink : 'none'} />
     </IconButton>
   );
@@ -148,7 +199,10 @@ export function SportTag({ sport }: { sport: keyof typeof sportTokens }) {
   );
 }
 
-/** Segmented control. */
+/**
+ * Segmented control. The selected pill glides between options on a layout
+ * spring instead of jumping, and selection ticks a selection haptic.
+ */
 export function Segmented<K extends string>({
   options,
   value,
@@ -164,8 +218,29 @@ export function Segmented<K extends string>({
   size?: FontSize;
   padX?: number;
 }) {
+  const [frames, setFrames] = useState<Record<string, { x: number; w: number }>>({});
+  const x = useSharedValue(0);
+  const w = useSharedValue(0);
+  const f = frames[value];
+  useEffect(() => {
+    if (!f) return;
+    // First measurement snaps; later changes glide.
+    if (w.value === 0) {
+      x.value = f.x;
+      w.value = f.w;
+    } else {
+      x.value = withSpring(f.x, spring.layout);
+      w.value = withSpring(f.w, spring.layout);
+    }
+  }, [f, x, w]);
+  const pill = useAnimatedStyle(() => ({ transform: [{ translateX: x.value }], width: w.value, opacity: w.value ? 1 : 0 }));
+  const onLayout = (k: K) => (e: LayoutChangeEvent) => {
+    const { x: lx, width } = e.nativeEvent.layout;
+    setFrames((fr) => (fr[k]?.x === lx && fr[k]?.w === width ? fr : { ...fr, [k]: { x: lx, w: width } }));
+  };
   return (
     <View
+      accessibilityRole="tablist"
       style={{
         flexDirection: 'row',
         padding: space.xxs,
@@ -174,28 +249,53 @@ export function Segmented<K extends string>({
         borderWidth: 1,
         borderColor: color.border,
       }}>
+      <Animated.View
+        pointerEvents="none"
+        style={[{ position: 'absolute', top: space.xxs, left: 0, height, borderRadius: radius.seg, backgroundColor: color.segOn }, pill]}
+      />
       {options.map(([k, l]) => {
         const on = k === value;
         return (
-          <Tap
+          <Pressable
             key={k}
-            onPress={() => onChange(k)}
-            style={{
-              flex: padX ? undefined : 1,
-              paddingHorizontal: padX,
-              height,
-              borderRadius: radius.seg,
-              backgroundColor: on ? color.segOn : 'transparent',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
+            onLayout={onLayout(k)}
+            onPress={() => {
+              if (!on) haptic.select();
+              onChange(k);
+            }}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: on }}
+            style={{ flex: padX ? undefined : 1, paddingHorizontal: padX, height, alignItems: 'center', justifyContent: 'center' }}>
             <Text variant="label" size={size} weight="bold" tint={on ? color.ink : color.dim} track="label">
               {l}
             </Text>
-          </Tap>
+          </Pressable>
         );
       })}
     </View>
+  );
+}
+
+/** On/off switch. The thumb glides on a spring. */
+export function Switch({ on, onChange, label }: { on: boolean; onChange: (v: boolean) => void; label: string }) {
+  const x = useSharedValue(on ? 18 : 0);
+  useEffect(() => {
+    x.value = withSpring(on ? 18 : 0, spring.glide);
+  }, [on, x]);
+  const thumb = useAnimatedStyle(() => ({ transform: [{ translateX: x.value }] }));
+  return (
+    <Pressable
+      onPress={() => {
+        haptic.select();
+        onChange(!on);
+      }}
+      accessibilityRole="switch"
+      accessibilityLabel={label}
+      accessibilityState={{ checked: on }}
+      hitSlop={8}
+      style={{ width: 46, height: 28, padding: space.xxs, borderRadius: radius.pill, backgroundColor: on ? color.ink : color.grabber }}>
+      <Animated.View style={[{ width: 22, height: 22, borderRadius: radius.pill, backgroundColor: on ? color.onBright : color.ink }, thumb]} />
+    </Pressable>
   );
 }
 

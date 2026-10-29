@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useMemo, useState, type ReactNo
 
 import { type CourtId, type Load, type MeTier, type SportKey } from '@/mock/data';
 import { derive, goingKey, initialGames, type Derived, type MockState } from '@/mock/model';
+import { emptyRun, LIST_SIZE, runKey, seedRuns, type Pair, type Run } from '@/mock/runs';
 import { ME, seedFriendships, seedMatches, seedNotes, type Format, type Friendship, type Match, type Note } from '@/mock/social';
 
 /**
@@ -55,6 +56,13 @@ type Ctx = MockState & {
   acceptProposed: (id: string) => void;
   logGame: (g: { court: CourtId; fmt: Format; ranked: boolean; a: string[]; b: string[]; score: [number, number] }) => string;
   dismissNote: (id: string) => void;
+  /** Open runs by court, day and hour (see src/mock/runs.ts). */
+  runs: Record<string, Run>;
+  /** Join a run. Pickleball needs a partner; basketball joins solo. */
+  joinRun: (c: CourtId, d: number, h: number, partner?: string) => void;
+  leaveRun: (c: CourtId, d: number, h: number) => void;
+  /** Pickleball: the pair on side 0 or 1 won. Winners stay, the next pair steps on. */
+  reportWinner: (c: CourtId, d: number, h: number, side: 0 | 1) => void;
 };
 
 const AppState = createContext<Ctx | null>(null);
@@ -63,7 +71,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [s, setS] = useState<MockState>({
     checkedAt: null,
     friendships: seedFriendships(),
-    mine: ['rc', 'pp', 'vb'],
+    mine: ['wd', 'rc', 'pp', 'vb'],
     going: { 'rc:3:12': true, 'rc:5:3': true, 'rc:2:13': true },
     games: initialGames,
     meTier: 'contender',
@@ -82,6 +90,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [matches, setMatches] = useState<Match[]>(seedMatches);
   const [notes, setNotes] = useState<Note[]>(seedNotes);
   const [blocked, setBlocked] = useState<string[]>([]);
+  const [runs, setRuns] = useState<Record<string, Run>>(seedRuns);
 
   const checkIn = useCallback((c: CourtId) => setS((x) => ({ ...x, checkedAt: c })), []);
   const checkOut = useCallback(() => setS((x) => ({ ...x, checkedAt: null })), []);
@@ -162,6 +171,45 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     return id;
   }, []);
   const dismissNote = useCallback((id: string) => setNotes((n) => n.filter((it) => it.id !== id)), []);
+  const joinRun = useCallback((c: CourtId, d: number, h: number, partner?: string) => {
+    const k = runKey(c, d, h);
+    setRuns((all) => {
+      const r = all[k] ?? emptyRun(c);
+      if (r.kind === 'list') {
+        if (r.ids.includes(ME) || r.ids.length >= LIST_SIZE) return all;
+        return { ...all, [k]: { ...r, ids: [...r.ids, ME] } };
+      }
+      if (!partner) return all;
+      const pair: Pair = [ME, partner];
+      // An empty court takes the first two pairs straight away.
+      const line = [...r.line, pair];
+      if (r.court.length === 0 && line.length >= 2) return { ...all, [k]: { ...r, court: [line[0], line[1]], line: line.slice(2) } };
+      return { ...all, [k]: { ...r, line } };
+    });
+  }, []);
+  const leaveRun = useCallback((c: CourtId, d: number, h: number) => {
+    const k = runKey(c, d, h);
+    setRuns((all) => {
+      const r = all[k];
+      if (!r) return all;
+      if (r.kind === 'list') return { ...all, [k]: { ...r, ids: r.ids.filter((i) => i !== ME) } };
+      return { ...all, [k]: { ...r, line: r.line.filter((p) => !p.includes(ME)) } };
+    });
+  }, []);
+  const reportWinner = useCallback((c: CourtId, d: number, h: number, side: 0 | 1) => {
+    const k = runKey(c, d, h);
+    setRuns((all) => {
+      const r = all[k];
+      if (!r || r.kind !== 'pairs' || r.court.length !== 2) return all;
+      const winners = r.court[side];
+      const [next, ...rest] = r.line;
+      return {
+        ...all,
+        // Side 0 is the pair holding the court; its streak grows, a challenger's win starts a new one.
+        [k]: { kind: 'pairs', court: next ? [winners, next] : [], line: next ? rest : [winners], streak: side === 0 ? r.streak + 1 : 1 },
+      };
+    });
+  }, []);
 
   const value = useMemo<Ctx>(
     () => ({
@@ -194,8 +242,12 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       acceptProposed,
       logGame,
       dismissNote,
+      runs,
+      joinRun,
+      leaveRun,
+      reportWinner,
     }),
-    [s, signedIn, profile, prefs, matches, notes, blocked, homeIndex, checkIn, checkOut, toggleSaved, toggleGoing, postRun, setMeTier, setLoad, signIn, signOut, setProfile, setPrefs, setFriendship, block, unblock, approve, dispute, acceptProposed, logGame, dismissNote],
+    [s, signedIn, profile, prefs, matches, notes, blocked, homeIndex, checkIn, checkOut, toggleSaved, toggleGoing, postRun, setMeTier, setLoad, signIn, signOut, setProfile, setPrefs, setFriendship, block, unblock, approve, dispute, acceptProposed, logGame, dismissNote, runs, joinRun, leaveRun, reportWinner],
   );
   return <AppState.Provider value={value}>{children}</AppState.Provider>;
 }

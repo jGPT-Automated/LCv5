@@ -12,6 +12,7 @@ import { Card } from '@/components/ui/surfaces';
 import { Text } from '@/components/ui/Text';
 import { days, dayNums, HOURS, NOW_HOUR, TODAY, type CourtId } from '@/mock/data';
 import { dayName, friendNames, goingKey, heatLevel, hourLabel } from '@/mock/model';
+import { canSchedule } from '@/mock/runs';
 import { useApp } from '@/state/AppState';
 import { color, size, space } from '@/theme';
 
@@ -113,8 +114,9 @@ function SinglePanel({ court, d: day, h, onNewGame }: { court: CourtId; d: numbe
   const n = ppl.length;
   const fn = friendNames(ppl);
   const lb = hourLabel(7 + h);
-  const title = g ? g.title : n ? n + ' going' : 'Nobody yet';
-  const sub = g ? g.fmt + ' · ' + n + ' of ' + g.cap + (fn ? ' · ' + fn : '') : fn ? fn + (n > 1 ? ' and others' : '') : n ? 'No friends yet' : 'Be the first';
+  const openRun = !g && !canSchedule(day, h);
+  const title = g ? g.title : openRun ? 'Open run' : n ? n + ' going' : 'Nobody yet';
+  const sub = openRun ? 'Join it on Home · games are posted 2 hours out' : g ? g.fmt + ' · ' + n + ' of ' + g.cap + (fn ? ' · ' + fn : '') : fn ? fn + (n > 1 ? ' and others' : '') : n ? 'No friends yet' : 'Be the first';
   return (
     <Card>
       <View style={{ height: size.schedPanel - space.xl * 2 - 2, justifyContent: 'space-between' }}>
@@ -145,7 +147,7 @@ function SinglePanel({ court, d: day, h, onNewGame }: { court: CourtId; d: numbe
             feedback="commit"
             onPress={() => toggleGoing(court, day, h)}
           />
-          {!g ? <Button label="+ New game" kind="ghost" grow onPress={onNewGame} /> : null}
+          {!g && !openRun ? <Button label="+ New game" kind="ghost" grow onPress={onNewGame} /> : null}
         </View>
       </View>
     </Card>

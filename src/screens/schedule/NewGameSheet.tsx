@@ -7,6 +7,7 @@ import { Sheet } from '@/components/ui/Sheet';
 import { Text } from '@/components/ui/Text';
 import { courts, type CourtId } from '@/mock/data';
 import { dayName, hourLabel } from '@/mock/model';
+import { canSchedule } from '@/mock/runs';
 import { useApp } from '@/state/AppState';
 import { color, space } from '@/theme';
 
@@ -39,7 +40,8 @@ export function NewGameSheet({ at, onClose }: { at: NewGameAt | null; onClose: (
   const lb = q ? hourLabel(7 + q.h) : null;
 
   const post = () => {
-    if (!q) return;
+    // The next 2 hours belong to open runs (src/mock/runs.ts).
+    if (!q || !canSchedule(q.d, q.h)) return;
     app.postRun(q.court, q.d, q.h, ranked ? 'Ranked game' : 'Pickup game', f + (ranked ? ' · Ranked' + (req !== 'Any' ? ' · ' + req : '') : ''), CAP[f]);
     onClose();
   };

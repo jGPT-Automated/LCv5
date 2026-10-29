@@ -10,7 +10,7 @@
  * starting a game from Schedule.
  */
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { Easing, ReduceMotion, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -218,5 +218,15 @@ export function MorphingModalHeader({ title, onBack }: { title: string; onBack?:
       </Text>
       {btn('Close', () => ctx?.close(), 'close')}
     </View>
+  );
+}
+
+/** Content that can outgrow the card: scrolls inside it, up to just over half the screen. */
+export function MorphingModalScroll({ children }: { children: ReactNode }) {
+  const { height } = useWindowDimensions();
+  return (
+    <ScrollView style={{ maxHeight: height * 0.55 }} contentContainerStyle={{ gap: space.xl }} showsVerticalScrollIndicator={false}>
+      {children}
+    </ScrollView>
   );
 }

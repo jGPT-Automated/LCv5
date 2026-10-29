@@ -17,6 +17,8 @@ import { courts } from '@/mock/data';
 import { dayLabel, formats, headToHead, ME, profileInfo, scoreFor, type Format } from '@/mock/social';
 import { useApp } from '@/state/AppState';
 import { usePeople } from '@/state/usePeople';
+
+import { QuickLog } from './QuickLog';
 import { color, space, sport } from '@/theme';
 
 type Tab = 'h2h' | 'activity' | 'details';
@@ -44,7 +46,8 @@ export function PlayerScreen({ id }: { id: string }) {
 
   const wins = Math.round(((p.elo ?? 1000) - 1000) / 9) + 4;
   const net = h2h.games.reduce((sum, m) => sum + (m.delta[ME] ?? 0), 0);
-  const logWith = () => router.push({ pathname: '/log-game', params: { opp: id } });
+  const [logging, setLogging] = useState(false);
+  const logWith = () => setLogging(true);
 
   return (
     <Page
@@ -92,8 +95,7 @@ export function PlayerScreen({ id }: { id: string }) {
         <ProfileHeader
           p={p}
           name={p.n + ' ' + p.i.charAt(1) + '.'}
-          meta={p.live ? 'On court now · ' + courts[info.home].name : courts[info.home].name + ' · ' + sport[courts[info.home].sport].label}
-          metaTint={p.live ? color.orangeInk : undefined}
+          meta={courts[info.home].name + ' · ' + sport[courts[info.home].sport].label}
           stats={[
             { value: p.elo ? wins + '–' + Math.max(3, 30 - wins) : '0–0', label: 'Record' },
             { value: p.elo ? wins + Math.max(3, 30 - wins) : 0, label: 'Games' },
@@ -179,6 +181,7 @@ export function PlayerScreen({ id }: { id: string }) {
         ) : null}
       </PageScroll>
 
+      <QuickLog opp={id} oppName={p.n} open={logging} onClose={() => setLogging(false)} />
       <Dialog
         open={open === 'challenge'}
         onClose={close}

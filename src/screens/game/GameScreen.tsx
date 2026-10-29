@@ -5,7 +5,6 @@ import { GameBoard } from '@/components/court/GameBoard';
 import { Page } from '@/components/layout/Page';
 import { PageScroll } from '@/components/layout/PageScroll';
 import { Button, EmptyRow, IconButton, Switch } from '@/components/ui/controls';
-import { Countdown } from '@/components/ui/Countdown';
 import { Dialog } from '@/components/ui/Dialog';
 import { Field } from '@/components/ui/Field';
 import { Icon } from '@/components/ui/Icon';
@@ -20,7 +19,7 @@ import { useApp } from '@/state/AppState';
 import { usePeople } from '@/state/usePeople';
 import { color, space } from '@/theme';
 
-const DID = { logged: 'logged', approved: 'approved', disputed: 'disputed', revised: 'revised', auto: 'auto-approved' } as const;
+const DID = { logged: 'logged the game', approved: 'approved the game', disputed: 'disputed the score', revised: 'fixed the score', auto: 'Auto-approved' } as const;
 
 /**
  * A game, laid out as in the current app: time left on top, the game card
@@ -53,7 +52,7 @@ export function GameScreen({ id }: { id: string }) {
       : m.status === 'disputed'
         ? { label: 'Disputed', tone: 'orange' as const }
         : needsYou
-          ? { label: 'Needs your review', tone: 'orange' as const }
+          ? { label: 'Waiting on you', tone: 'orange' as const }
           : { label: 'Waiting on ' + name(m.waitingOn[0] ?? ''), tone: 'quiet' as const };
 
   const eloFor = (ids: string[]) => {
@@ -68,7 +67,7 @@ export function GameScreen({ id }: { id: string }) {
     ...m.events.map((e) => ({
       when: e.ago === 0 ? 'Now' : clock(e.ago),
       who: e.what === 'auto' ? undefined : name(e.who),
-      what: e.what === 'auto' ? 'Auto-approved' : DID[e.what],
+      what: DID[e.what],
       detail: e.what === 'disputed' && m.proposed ? 'Proposed ' + m.proposed[0] + '–' + m.proposed[1] + (e.note ? '. ' + e.note : '') : e.note,
       state: 'done' as const,
     })),
@@ -86,38 +85,40 @@ export function GameScreen({ id }: { id: string }) {
       }
       footer={
         <>
-          {needsYou && m.status === 'review' ? (
-            <View style={{ flexDirection: 'row', gap: space.m }}>
-              <Button label="Dispute" kind="ghost" size="large" grow onPress={() => setDisputing(true)} />
-              <Button label="Approve score" kind="orange" size="large" grow feedback="success" onPress={() => app.approve(m.id)} />
-            </View>
-          ) : null}
-          {m.status === 'disputed' && youLogged && m.proposed ? (
-            <Button label={'Accept ' + m.proposed[0] + '–' + m.proposed[1]} kind="orange" size="large" feedback="success" onPress={() => app.acceptProposed(m.id)} />
-          ) : null}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.l }}>
             <Icon name="eye" size={18} tint={color.muted} />
             <View style={{ flex: 1 }}>
-              <Text t="rowTitle">Hide score</Text>
-              <Text t="meta" tint={color.muted}>
+              <Text t="headline">Hide score</Text>
+              <Text t="footnote" tint={color.muted}>
                 {hidden ? 'Others see only W or L' : 'Score shows in feeds'}
               </Text>
             </View>
             <Switch on={hidden} onChange={setHidden} label="Hide score" />
           </View>
+          {needsYou && m.status === 'review' ? (
+            <View style={{ flexDirection: 'row', gap: space.m }}>
+              <Button label="Dispute" kind="ghost" size="large" grow icon={<Icon name="flag" size={16} />} onPress={() => setDisputing(true)} />
+              <Button
+                label="Approve score"
+                kind="orange"
+                size="large"
+                grow
+                feedback="success"
+                icon={<Icon name="check" size={14} tint={color.onBright} />}
+                onPress={() => app.approve(m.id)}
+              />
+            </View>
+          ) : null}
+          {m.status === 'disputed' && youLogged && m.proposed ? (
+            <Button label={'Accept ' + m.proposed[0] + '–' + m.proposed[1]} kind="orange" size="large" feedback="success" onPress={() => app.acceptProposed(m.id)} />
+          ) : null}
         </>
       }>
       <PageScroll>
-        {m.status !== 'final' ? (
-          <View style={{ marginBottom: space.x5 }}>
-            <Countdown
-              label={m.status === 'disputed' ? 'Resolve within' : 'Auto-approves in'}
-              value={timeLeft(left)}
-              left={left / (m.status === 'disputed' ? 168 : 72)}
-            />
-          </View>
-        ) : null}
-        <StatusCard status={status.label} tone={status.tone}>
+        <StatusCard
+          status={status.label}
+          tone={status.tone}
+          note={m.status === 'final' ? undefined : (m.status === 'disputed' ? 'Voids in ' : 'Auto-approves in ') + timeLeft(left)}>
           <GameBoard
             title={m.fmt + ' at ' + courts[m.court].name}
             date={dayLabel(m.ago)}

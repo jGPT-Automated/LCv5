@@ -48,6 +48,19 @@ type TextStyleDef = { variant: 'body' | 'display' | 'label'; size: FontSize; wei
 
 /** Named text styles. Screens pick one of these by name (docs/DESIGN.md, Type). */
 export const textStyle = {
+  // Apple's iOS text styles (HIG Typography, Large/default size). New and
+  // reworked screens use these; the V5 names below are being moved onto them.
+  largeTitle: { variant: 'display', size: 34, track: 'tight', lineHeight: 1.2 },
+  title1: { variant: 'display', size: 28, track: 'tight', lineHeight: 1.2 },
+  title2: { variant: 'display', size: 22, lineHeight: 1.27 },
+  title3: { variant: 'display', size: 20, lineHeight: 1.25 },
+  headline: { variant: 'body', size: 17, weight: 'semi', lineHeight: 1.3 },
+  callout: { variant: 'body', size: 16, weight: 'medium', lineHeight: 1.31 },
+  subhead: { variant: 'body', size: 15, weight: 'medium', lineHeight: 1.33 },
+  footnote: { variant: 'body', size: 13, weight: 'medium', lineHeight: 1.38 },
+  caption1: { variant: 'body', size: 12, weight: 'medium', lineHeight: 1.33 },
+  caption2: { variant: 'label', size: 11, weight: 'bold', track: 'wide' },
+
   /** Onboarding headline only, e.g. "Find your run." */
   splash: { variant: 'display', size: 46, weight: 'bold', track: 'tightest', lineHeight: 0.92 },
   pageTitle: { variant: 'display', size: 24, track: 'title' },

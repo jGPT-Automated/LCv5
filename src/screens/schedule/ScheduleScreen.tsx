@@ -10,7 +10,7 @@ import { Chip } from '@/components/ui/Chip';
 import { Button } from '@/components/ui/controls';
 import { Card } from '@/components/ui/surfaces';
 import { Text } from '@/components/ui/Text';
-import { courts, days, dayNums, HOURS, NOW_HOUR, TODAY, type CourtId } from '@/mock/data';
+import { days, dayNums, HOURS, NOW_HOUR, TODAY, type CourtId } from '@/mock/data';
 import { dayName, friendNames, goingKey, heatLevel, hourLabel } from '@/mock/model';
 import { useApp } from '@/state/AppState';
 import { color, size, space } from '@/theme';

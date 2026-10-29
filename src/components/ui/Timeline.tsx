@@ -13,9 +13,9 @@ export function Timeline({ items }: { items: TimelineItem[] }) {
       {items.map((it, k) => {
         const last = k === items.length - 1;
         return (
-          <View key={k} style={{ flexDirection: 'row', gap: space.xl, minHeight: size.row }}>
+          <View key={k} style={{ flexDirection: 'row', gap: space.xl, minHeight: size.button }}>
             <View style={{ width: size.dateBlock + space.l, alignItems: 'flex-end', paddingTop: space.xxxs }}>
-              <Text t="meta" tint={color.dim} upper={it.state === 'first'}>
+              <Text t="footnote" tint={color.dim}>
                 {it.when}
               </Text>
             </View>
@@ -33,17 +33,17 @@ export function Timeline({ items }: { items: TimelineItem[] }) {
               />
               {!last ? <View style={{ flex: 1, width: 1, backgroundColor: color.divider, marginTop: space.xs }} /> : null}
             </View>
-            <View style={{ flex: 1, paddingBottom: space.xl }}>
-              <Text t="lead" tint={it.state === 'pending' ? color.muted : color.inkSub}>
+            <View style={{ flex: 1, paddingBottom: space.l }}>
+              <Text t="subhead" tint={it.state === 'pending' ? color.muted : color.inkSub}>
                 {it.who ? (
-                  <Text t="lead" weight="bold">
+                  <Text t="subhead" weight="bold" tint={color.ink}>
                     {it.who + ' '}
                   </Text>
                 ) : null}
                 {it.what}
               </Text>
               {it.detail ? (
-                <Text t="caption" weight="medium" tint={color.muted} style={{ marginTop: space.xs }}>
+                <Text t="footnote" tint={color.muted} style={{ marginTop: space.xxs }}>
                   {it.detail}
                 </Text>
               ) : null}

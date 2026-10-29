@@ -157,6 +157,8 @@ export const radius = {
   hero: 18,
   profile: 22,
   sheet: 25,
+  /** Morphing modal card (beUI). */
+  modal: 36,
   pill: 999,
 } as const;
 
@@ -210,6 +212,8 @@ export const size = {
   rankLabel: 22,
   /** Height of an illustration banner at the top of a page. */
   artBanner: 260,
+  /** Close and back buttons in a modal header. */
+  modalButton: 32,
   /** The panel under the schedule grid. */
   schedPanel: 140,
   /** Day header cells above the schedule grid. */

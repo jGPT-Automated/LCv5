@@ -3,14 +3,13 @@ import { useState } from 'react';
 import { View } from 'react-native';
 
 import { HourBars } from '@/components/court/HourBars';
-import { AvatarStack } from '@/components/ui/Avatar';
-import { BookmarkButton, Button, SportTag } from '@/components/ui/controls';
+import { BookmarkButton, Button } from '@/components/ui/controls';
 import { Glow } from '@/components/ui/Glow';
 import { useOverlay } from '@/components/ui/Overlay';
 import { Sheet } from '@/components/ui/Sheet';
-import { StatStrip } from '@/components/ui/surfaces';
 import { Text } from '@/components/ui/Text';
 import { courts, HOURS, NOW_HOUR, type CourtId } from '@/mock/data';
+import { courtDistance, courtPlace } from '@/mock/model';
 import { useApp } from '@/state/AppState';
 import { color, size, space, sport } from '@/theme';
 
@@ -36,57 +35,50 @@ function Body({ cid, onClose }: { cid: CourtId; onClose: () => void }) {
   const people = d.livePeople(cid).map(d.view(cid));
   const names = people.map((p) => (p.me ? 'You' : p.n));
   return (
-    <View style={{ gap: space.xxl }}>
+    <View style={{ gap: space.x5 }}>
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: space.l }}>
-        <View style={{ flex: 1, minWidth: 0, gap: space.m }}>
-          <SportTag sport={ct.sport} />
-          <Text t="sheetTitle">
-            {ct.name}
-            <Text t="sheetTitle" tint={color.orange}>
-              .
-            </Text>
+        <View style={{ flex: 1, minWidth: 0, gap: space.xs }}>
+          <Text t="caption2" tint={sport[ct.sport].ink}>
+            {sport[ct.sport].label}
           </Text>
-          <Text t="meta" tint={color.muted}>
-            {ct.area}
+          <Text t="title1" numberOfLines={2}>
+            {ct.name}
+          </Text>
+          <Text t="footnote" tint={color.muted}>
+            {courtPlace(cid) + ' · ' + courtDistance(cid) + ' · ' + ct.locals + ' locals'}
           </Text>
         </View>
         <BookmarkButton saved={mine.includes(cid)} onPress={() => toggleSaved(cid)} />
       </View>
-      <StatStrip
-        framed
-        align="start"
-        items={[
-          { value: n, label: 'Live now', tint: n ? color.orangeInk : color.ink },
-          { value: ct.locals, label: 'Locals' },
-          { value: d.gamesThisWeek(cid), label: 'Games this week' },
-        ]}
-      />
-      <HourBars
-        counts={d.todayCounts(cid)}
-        height={size.barChartSm}
-        labels={Array.from({ length: HOURS }, (_, i) => (i === NOW_HOUR ? 'NOW' : i === 0 ? '7A' : i === 16 ? '11P' : ''))}
-        future={color.futureBarDrawer}
-      />
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.l, minHeight: size.compact }}>
-        {people.length ? <AvatarStack people={people} outline={color.sheet} max={4} /> : null}
-        <Text t="caption" tint={color.inkSub} numberOfLines={1} style={{ flex: 1 }}>
-          {people.length ? names.slice(0, 3).join(', ') + (names.length > 3 ? ' +' + (names.length - 3) : '') + ' on court' : 'Nobody on court yet'}
-        </Text>
+      <View style={{ gap: space.m }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
+          <Text t="headline">Today</Text>
+          <Text t="footnote" tint={n ? color.orangeInk : color.muted}>
+            {n + ' on court now'}
+          </Text>
+        </View>
+        <HourBars
+          counts={d.todayCounts(cid)}
+          height={size.barChartSm}
+          labels={Array.from({ length: HOURS }, (_, i) => (i === NOW_HOUR ? 'Now' : i === 0 ? '7A' : i === 16 ? '11P' : ''))}
+          future={color.futureBarDrawer}
+        />
       </View>
-      <View style={{ flexDirection: 'row', gap: space.m }}>
+      <Text t="subhead" tint={people.length ? color.inkSub : color.muted} numberOfLines={2}>
+        {people.length ? names.join(', ') : 'Nobody on court yet'}
+      </Text>
+      <View style={{ gap: space.m }}>
         <Button
-          label={here ? '✓ Checked in' : 'Check in'}
-          kind={here ? 'here' : 'orange'}
+          label={here ? 'Check out' : 'Check in'}
+          kind={here ? 'outline' : 'orange'}
           size="large"
-          grow
           feedback="commit"
           onPress={() => (here ? checkOut() : checkIn(cid))}
         />
         <Button
-          label="Court page ›"
+          label="Court page"
           kind="ghost"
           size="large"
-          grow
           onPress={() => {
             onClose();
             router.push({ pathname: '/court/[id]', params: { id: cid } });

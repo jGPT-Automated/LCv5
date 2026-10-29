@@ -27,7 +27,8 @@ export type IconName =
   | 'info'
   | 'eye'
   | 'userMinus'
-  | 'userPlus';
+  | 'userPlus'
+  | 'flag';
 
 type Props = { name: IconName; size?: number; tint?: string; fill?: string; strokeWidth?: number };
 
@@ -106,6 +107,12 @@ export function Icon({ name, size = 22, tint = color.ink, fill = 'none', strokeW
           <Path d="m4 7 8 6 8-6" />
         </Svg>
       );
+    case 'flag':
+      return (
+        <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={tint} strokeWidth={strokeWidth} strokeLinejoin="round" strokeLinecap="round">
+          <Path d="M5 21V4M5 4h11l-2 4 2 4H5" />
+        </Svg>
+      );
     case 'info':
       return (
         <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={tint} strokeWidth={strokeWidth} strokeLinecap="round">
@@ -181,13 +188,24 @@ export function Icon({ name, size = 22, tint = color.ink, fill = 'none', strokeW
         </Svg>
       );
     case 'gear':
+      // Lucide "settings" (ISC license): a cog, not a sun.
       return (
-        <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={tint} strokeWidth={strokeWidth}>
+        <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={tint} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+          <Path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
           <Circle cx="12" cy="12" r="3" />
-          <Path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" />
         </Svg>
       );
   }
+}
+
+/** Back, in the LocalCheck mark's style: corner brackets with an orange chevron. */
+export function BackMark({ size = 24, frame = color.ink, chevron = color.orange }: { size?: number; frame?: string; chevron?: string }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M3 8V3h5M16 3h5v5M21 16v5h-5M8 21H3v-5" stroke={frame} strokeWidth={2} strokeLinecap="square" />
+      <Path d="M14 7.5 9.5 12l4.5 4.5" stroke={chevron} strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
 }
 
 /** The LocalCheck mark: corner brackets with a check. */

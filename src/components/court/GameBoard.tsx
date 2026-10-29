@@ -20,10 +20,10 @@ export function GameBoard({ title, date, a, b }: { title: string; date: string; 
   const aWide = a.score / total;
   return (
     <View>
-      <Text t="cardTitle" align="center">
+      <Text t="title3" align="center">
         {title}
       </Text>
-      <Text t="section" tint={color.muted} align="center" style={{ marginTop: space.m }}>
+      <Text t="footnote" tint={color.muted} align="center" style={{ marginTop: space.xs }}>
         {date}
       </Text>
       <View style={{ flexDirection: 'row', marginTop: space.xl }}>
@@ -58,7 +58,7 @@ export function GameBoard({ title, date, a, b }: { title: string; date: string; 
                 onPress={() => openPlayer(p.i, !!p.me)}
                 style={{ flexDirection: k ? 'row-reverse' : 'row', alignItems: 'center', gap: space.l }}>
                 <Avatar p={p} size="l" />
-                <Text t="lead" weight="semi" tint={s.won ? color.ink : color.muted} numberOfLines={1} style={{ flexShrink: 1 }}>
+                <Text t="title3" tint={s.won ? color.ink : color.muted} numberOfLines={1} style={{ flexShrink: 1 }}>
                   {p.me ? 'You' : p.n}
                 </Text>
               </Tap>

@@ -20,8 +20,22 @@ type Back = { label: string; fallback: Parameters<typeof BackButton>[0]['fallbac
  * - Tab page: logo mark, title, one action.
  * - Pushed page (`back`): back button, title, one action. No tab bar.
  * - While checked in, the header on every tab page turns orange with Check out.
+ * - `footer`: a page's actions, pinned to the bottom above the home indicator.
  */
-export function Page({ title, action, back, children }: { title: string; action?: ReactNode; back?: Back; children: ReactNode }) {
+export function Page({
+  title,
+  action,
+  back,
+  footer,
+  children,
+}: {
+  title: string;
+  action?: ReactNode;
+  back?: Back;
+  /** Actions pinned to the bottom of a pushed page (Approve, Challenge, Log game). */
+  footer?: ReactNode;
+  children: ReactNode;
+}) {
   const insets = useSafeAreaInsets();
   const { checkedAt, checkOut } = useApp();
   const top = Math.max(insets.top, layout.statusBar);
@@ -74,7 +88,21 @@ export function Page({ title, action, back, children }: { title: string; action?
           )}
         </View>
       </Animated.View>
-      <View style={{ flex: 1, paddingBottom: back ? insets.bottom : size.tabBar }}>{children}</View>
+      <View style={{ flex: 1, paddingBottom: footer ? 0 : back ? insets.bottom : size.tabBar }}>{children}</View>
+      {footer ? (
+        <View
+          style={{
+            paddingHorizontal: space.gutter,
+            paddingTop: space.l,
+            paddingBottom: back ? Math.max(insets.bottom, space.l) : size.tabBar + space.l,
+            borderTopWidth: 1,
+            borderTopColor: color.divider,
+            backgroundColor: color.bg,
+            gap: space.m,
+          }}>
+          {footer}
+        </View>
+      ) : null}
     </View>
   );
 }

@@ -43,6 +43,10 @@ export const color = {
   orangeLine: 'rgba(252,76,2,0.4)',
   orangeEdge: 'rgba(252,76,2,0.55)',
   orangeGlow: 'rgba(252,76,2,0.7)',
+  /** Brand orange as "r,g,b", for SVG glows (`Glow`). */
+  orangeRGB: '252,76,2',
+  /** Ink as "r,g,b", for a neutral `Glow`. */
+  inkRGB: '242,242,246',
 
   // Hairlines and outlines on dark surfaces (ink at low alpha)
   line: 'rgba(242,242,246,0.06)',
@@ -204,4 +208,12 @@ export const size = {
   timeLabel: 36,
   /** Width of a rank number in leaderboard rows. */
   rankLabel: 22,
+  /** Height of an illustration banner at the top of a page. */
+  artBanner: 260,
+  /** The panel under the schedule grid. */
+  schedPanel: 140,
+  /** Day header cells above the schedule grid. */
+  dayHead: 38,
+  /** Your-plans underline on a grid cell. */
+  underline: 3,
 } as const;

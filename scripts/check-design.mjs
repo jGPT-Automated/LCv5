@@ -47,7 +47,7 @@ for (const f of files) {
   }
   if (/useSafeAreaInsets/.test(src)) problems.push(`${rel}  uses useSafeAreaInsets → only Page handles insets`);
   if (/Screen\.tsx$/.test(f)) {
-    if (!/<Page\b/.test(src)) problems.push(`${rel}  screen doesn't render <Page> → every screen uses the shared page frame`);
+    if (!/<(Page|FlowPage)\b/.test(src)) problems.push(`${rel}  screen doesn't render <Page> or <FlowPage> → every screen uses a shared page frame`);
   }
   for (const m of src.matchAll(new RegExp(TEXT_SIZE, 'gs'))) {
     const line = src.slice(0, m.index).split('\n').length;

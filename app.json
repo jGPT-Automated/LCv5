@@ -33,6 +33,14 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "LocalCheck uses your location to show courts near you and to check you in when you tap Check in.",
+          "locationAlwaysAndWhenInUsePermission": "With auto check-in on, LocalCheck checks you in when you arrive at your saved courts and out when you leave.",
+          "isIosBackgroundLocationEnabled": true
+        }
       ]
     ],
     "experiments": {

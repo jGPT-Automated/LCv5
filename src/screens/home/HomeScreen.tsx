@@ -13,12 +13,13 @@ import { courts, type CourtId } from '@/mock/data';
 import { useApp } from '@/state/AppState';
 import { color, space, sport } from '@/theme';
 
+import { ActivityTab } from './ActivityTab';
 import { CourtHero } from './CourtHero';
 import { PlayersTab, type PlayerSort } from './PlayersTab';
 import { TodayTab } from './TodayTab';
 import { WeekTab } from './WeekTab';
 
-type Tab = 'now' | 'week' | 'players';
+type Tab = 'now' | 'week' | 'players' | 'activity';
 
 /**
  * Home: your saved courts. Swipe the top, tap the dots, or tap the name to
@@ -75,6 +76,7 @@ export function HomeScreen({ courtId }: { courtId?: CourtId }) {
             ['now', 'Today'],
             ['week', 'Week'],
             ['players', 'Players'],
+            ['activity', 'Activity'],
           ]}
           value={tab}
           onChange={setTab}
@@ -91,6 +93,7 @@ export function HomeScreen({ courtId }: { courtId?: CourtId }) {
       ) : null}
       {tab === 'week' ? <WeekTab court={cur} /> : null}
       {tab === 'players' ? <PlayersTab court={cur} sort={sort} onSort={setSort} /> : null}
+      {tab === 'activity' ? <ActivityTab court={cur} /> : null}
       <Menu
         open={menu}
         onClose={() => setMenu(false)}

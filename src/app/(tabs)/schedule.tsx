@@ -1,5 +1,3 @@
-import { LaterScreen } from '@/screens/later/LaterScreen';
+import { ScheduleScreen } from '@/screens/schedule/ScheduleScreen';
 
-export default function Schedule() {
-  return <LaterScreen title="Schedule" note="The week grid, multi-select and New game sheet come in a later chunk." />;
-}
+export default ScheduleScreen;

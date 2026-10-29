@@ -1,10 +1,12 @@
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 
 import { CourtMap } from '@/components/court/CourtMap';
 import { Page } from '@/components/layout/Page';
 import { PageScroll } from '@/components/layout/PageScroll';
-import { EmptyRow, Segmented } from '@/components/ui/controls';
+import { Button, EmptyRow, Segmented } from '@/components/ui/controls';
+import { Icon } from '@/components/ui/Icon';
 import { SearchField } from '@/components/ui/SearchField';
 import { Section } from '@/components/ui/surfaces';
 import { courtIds, courts, type CourtId } from '@/mock/data';
@@ -63,6 +65,9 @@ export function ExploreScreen() {
             </Section>
           ) : null}
           {!saved.length && !near.length ? <EmptyRow>No courts match that search</EmptyRow> : null}
+          <View style={{ marginTop: space.x5 }}>
+            <Button label="Add a court" kind="ghost" icon={<Icon name="plus" size={12} />} onPress={() => router.push('/add-court')} />
+          </View>
         </PageScroll>
       ) : (
         <CourtMap onPick={setOpen} />

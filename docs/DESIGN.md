@@ -20,8 +20,9 @@ the theme are taken from its source.
 4. **Motion with intent.** Subtle, on the moments that matter, and missed when
    it's gone. Never on routine taps. See Motion.
 5. **Dark only.** Orange is reserved for live, check-in and "you".
-6. **Plain copy.** No emoji, no exclamation marks, first names only for other
-   players.
+6. **Plain copy, data first.** Numbers over sentences ("0 live now", "9
+   going"). No emoji, no exclamation marks, first names only for other
+   players. Full rules: `docs/COPY.md`.
 
 ## Folders
 
@@ -60,12 +61,53 @@ Every screen renders inside `Page` (`src/components/layout/Page.tsx`).
 - A screen can't move, hide or scroll the header. Scrolling content goes in
   `PageScroll` (20pt gutter, 12pt top, 24pt bottom).
 
+## Flow frame
+
+Sign-in and onboarding use `FlowPage` (`src/components/layout/FlowPage.tsx`)
+instead of `Page`: no tab bar, no title bar.
+
+```
+┌──────────────────────────────┐
+│ [‹]  ▬▬▬▬ ▬▬▬▬ ▭▭▭▭     Skip │  back, progress, optional skip
+│                              │
+│        illustration          │  MapArt, RadiusArt, AlertArt, SplashArt
+│                              │
+│ HEADLINE.                    │  `splash`, period in orange
+│ One or two lines of `lead`.  │
+│ [ step's own controls ]      │  fields, choices
+├──────────────────────────────┤
+│ [      PRIMARY (orange)    ] │  pinned to the bottom
+│ [      Not now (ghost)     ] │
+└──────────────────────────────┘
+```
+
+One decision per step. Permission steps ask at that moment, after the
+reason, and always have Not now.
+
+## Illustrations
+
+`src/components/art/Art.tsx`, SVG drawn from tokens. The language is the
+website's: a dark topographic map, rooftops, an orange route converging on
+a court, rings around it.
+
+| Art | Where |
+|-----|-------|
+| `MapArt` | Welcome, location step, add-court confirmation |
+| `RadiusArt` | Auto check-in: the court in its check-in circle, you arriving, the 5-minute hold |
+| `AlertArt` | Notifications step |
+| `SplashArt` | Sign in: the mark lit from behind |
+| `CourtArt` | Court lines in the corner of court cards and profile cards |
+
+Illustrations are decoration only (`pointerEvents="none"`); never put
+information only in art.
+
 ## Type
 
 Screens choose a style by name: `<Text t="rowTitle">`. Never a size.
 
 | Style | Font | Size | When |
 |-------|------|------|------|
+| `splash` | Oswald 700, caps | 46 | Onboarding headlines only |
 | `pageTitle` | Oswald 600, caps | 24 | Header title only |
 | `hero` | Oswald 600, caps | 28 | The one name a screen is about: court on Home, you on Me |
 | `sheetTitle` | Oswald 600, caps | 30 | A sheet's headline |
@@ -76,6 +118,7 @@ Screens choose a style by name: `<Text t="rowTitle">`. Never a size.
 | `stat` | Oswald 600 | 20 | Stats on a card |
 | `statS` | Oswald 600 | 16 | Numbers and times in rows |
 | `rowTitle` | Inter 600 | 13 | A row's main line: names, plain titles |
+| `lead` | Inter 500 | 15 | One or two lines under an onboarding headline or in a dialog |
 | `body` | Inter 500 | 13 | Sentences, field text |
 | `caption` | Inter 600 | 12 | A supporting sentence under a block |
 | `meta` | Inter 500 | 11 | Place, distance, notes |
@@ -95,24 +138,44 @@ only through the styles that already set them. One `hero` per screen.
 - **Radius** comes from components: button 4, segment 7, control 8, card 16,
   sheet 25, pill 999.
 - **Heights** come from `size`: compact control 36, button 44, large button 50,
-  field 42, segment 32, tab 42, row 56, header 52, tab bar 84.
+  field 42 (search) / 50 (form `Field`), segment 32, tab 42, row 56,
+  header 52, tab bar 84, art banner 260.
 
 ## Components
 
 | Need | Component |
 |------|-----------|
-| Page frame | `Page`, `PageScroll`, `Pager` (swipe between items with dots), `TabBar` |
+| Page frame | `Page` (with `footer` for a pushed page's actions, pinned to the bottom), `PageScroll`, `Pager` (swipe between items with dots), `TabBar`, `FlowPage` (sign-in, onboarding) |
 | Group of content | `Section` |
 | Surface | `Card` (optional sport or tier glow), `Group` (settings-style list) |
-| List item | `Row`, `RowValue`, `PlayerRow`, `GameRow` |
-| Numbers | `StatStrip`, `NumberTicker`, `LivePill` |
+| List item | `Row`, `RowValue`, `PlayerRow` (opens the profile), `GameRow` (a scheduled run), `MatchRow` (a played game; opens it), `ListRow` (settings row: value + chevron, toggle, or trailing) |
+| Numbers | `StatStrip`, `NumberTicker`, `LivePill`, `Stepper` (scores) |
+| Game (current app's layout) | `StatusCard` (status band + body), `GameBoard` (title, date, scores, ELO, players), `Countdown` (time left), `Timeline` (history), `H2HCard`, `ProfileHeader`, `PlayerPicker` |
+| Schedule and Compete (V5 design) | `ScheduleGrid` (week heat grid, tap or drag to select), `CourtSwitchButton` + `CourtMenu`, `PlayerBoard` (Ranked / Recent / All), `TierStrip` |
 | Actions | `Button` (`compact`, `regular`, `large`), `IconButton`, `BookmarkButton` |
-| Choice | `Segmented`, `Tabs`, `Switch`, `Menu` |
-| Input | `SearchField` |
-| Player | `Avatar`, `AvatarStack` |
+| Choice | `Segmented`, `Tabs`, `Switch`, `Menu`, `ChoiceList` (pick one), `Chip` (pick several, or a short option) |
+| Input | `SearchField`, `Field` (labeled input with hint or error), `SelectField` (dropdown trigger), `ScoreField` (big typed score), `PlayedDays` (last 7 days) |
+| Player | `Avatar` (rounded square from the V5 design: tier ring, top-5 fill, friend bar, live bar), `AvatarStack` |
 | Court data | `HourBars`, `HeatGrid`, `WeekBars`, `CourtMap` |
-| Small parts | `SportTag`, `LiveDot`, `Dot`, `Rule`, `ProgressBar`, `Glyph`, `EmptyRow` |
-| Overlay | `Sheet` (via `useOverlay`, so it covers the tab bar) |
+
+Where screens come from: Home, court page, Explore, Schedule and Compete
+follow the V5 design. The game flow (game score, profile, Log game, Me and
+inbox) follows the current LocalCheck app's layout, rebuilt on these
+components.
+| Small parts | `SportTag`, `LiveDot`, `Dot`, `Rule`, `ProgressBar`, `Glyph`, `EmptyRow`, `Pill` (status) |
+| Overlay | `Sheet` (via `useOverlay`, so it covers the tab bar), `Dialog` (a decision in a sheet: title, body, actions) |
+| Art | `MapArt`, `RadiusArt`, `AlertArt`, `SplashArt`, `CourtArt` (see Illustrations) |
+
+### Navigation
+
+- A player's name or avatar opens their profile (`PlayerRow`, `GameBoard`,
+  inbox items). Your own opens Me.
+- A game in any list opens the game page (`MatchRow`).
+- A court opens the court page.
+- A pushed page's actions go in `Page` `footer`, pinned to the bottom. Not in
+  the header, not in the middle of the page.
+- Pushed pages use the standard edge swipe to go back. No full-screen swipe:
+  it fights vertical scrolling and sideways scrollers.
 
 ### Button kinds
 
@@ -175,7 +238,7 @@ navigation. Screens never animate on their own; motion lives in components.
   `boxShadow`,
 - a non-zero numeric `height`, `minHeight`, `maxHeight`, `width` or `minWidth`,
 - `<Text>` with `size=` or `variant=` (use `t=`),
-- a `*Screen.tsx` that doesn't render `<Page>`.
+- a `*Screen.tsx` that doesn't render `<Page>` or `<FlowPage>`.
 
 `check:tokens` fails on raw colors anywhere outside `src/theme`, and on raw
 numbers for spacing, radius and font size.

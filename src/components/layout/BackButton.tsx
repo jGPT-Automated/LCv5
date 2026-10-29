@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { View } from 'react-native';
 
 import { Tap } from '@/components/ui/controls';
@@ -7,7 +7,7 @@ import { Text } from '@/components/ui/Text';
 import { color, radius, size, space } from '@/theme';
 
 /** Back control for pushed pages. Lives only in the header (docs/DESIGN.md). */
-export function BackButton({ label, fallback }: { label: string; fallback: '/' | '/me' | '/explore' | '/compete' | '/schedule' }) {
+export function BackButton({ label, fallback }: { label: string; fallback: Href }) {
   return (
     <Tap
       onPress={() => (router.canGoBack() ? router.back() : router.replace(fallback))}

@@ -23,7 +23,12 @@ const BLOCKS: [number, number, string][] = [
 
 /** The week at a court: planned visits by block, then upcoming games. */
 export function WeekTab({ court }: { court: CourtId }) {
-  const { d, going, games, toggleGoing } = useApp();
+  const { d, going, games, toggleGoing, mine, setHomeIndex } = useApp();
+  // Schedule shows one saved court; point it at this one when it's saved.
+  const focus = () => {
+    const k = mine.indexOf(court);
+    if (k >= 0) setHomeIndex(k);
+  };
 
   const cells: HeatCell[][] = BLOCKS.map(([a, b]) =>
     days.map((_, day) => {
@@ -46,9 +51,21 @@ export function WeekTab({ court }: { court: CourtId }) {
 
   return (
     <PageScroll top={space.xxl}>
-      <HeatGrid days={days} dayNums={dayNums} today={TODAY} rowLabels={BLOCKS.map((b) => b[2])} cells={cells} onPick={() => router.push('/schedule')} />
+      <HeatGrid days={days} dayNums={dayNums} today={TODAY} rowLabels={BLOCKS.map((b) => b[2])} cells={cells}
+        onPick={(r, day) => {
+          focus();
+          router.push({ pathname: '/schedule', params: { d: day, h: day === TODAY ? Math.max(BLOCKS[r][0], NOW_HOUR) : BLOCKS[r][0] } });
+        }}
+      />
       <View style={{ marginTop: space.xl }}>
-        <Button label="Plan in Schedule ›" kind="ghost" onPress={() => router.push('/schedule')} />
+        <Button
+          label="Plan in Schedule ›"
+          kind="ghost"
+          onPress={() => {
+            focus();
+            router.push('/schedule');
+          }}
+        />
       </View>
       <Section title="Upcoming games">
         {upcoming.length ? (

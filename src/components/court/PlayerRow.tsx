@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { View } from 'react-native';
 
 import { Avatar } from '@/components/ui/Avatar';
@@ -20,6 +21,7 @@ export function PlayerRow({
   valueLabel,
   trailing,
   wash,
+  onPress,
 }: {
   p: PlayerView;
   rank?: number | string;
@@ -30,9 +32,12 @@ export function PlayerRow({
   valueLabel?: string;
   trailing?: React.ReactNode;
   wash?: string;
+  /** Defaults to opening the player's profile (or Me for you). */
+  onPress?: () => void;
 }) {
   return (
     <Row
+      onPress={onPress ?? (() => openPlayer(p.i, !!p.me))}
       tone={p.me ? 'you' : undefined}
       wash={p.me ? undefined : wash}
       leading={
@@ -53,4 +58,10 @@ export function PlayerRow({
       trailing={trailing ?? (value !== undefined ? <RowValue value={value} label={valueLabel} /> : null)}
     />
   );
+}
+
+/** Open a player's profile; your own name goes to Me. */
+export function openPlayer(i: string, me?: boolean) {
+  if (me) router.navigate('/me');
+  else router.push({ pathname: '/player/[id]', params: { id: i } });
 }

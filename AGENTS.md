@@ -55,7 +55,7 @@ These override anything above where they conflict. Read `docs/DESIGN.md` before 
 6. **Missing a component? Build it in `src/components/`,** following "Adding or changing a component" in `docs/DESIGN.md`. Never inline in a screen.
 7. **Motion lives in components,** on the moments listed in `docs/DESIGN.md` Motion. Routine taps get an instant dim.
 8. **Tokens only.** Values come from `src/theme`.
-9. **Copy:** plain language, no emoji, no exclamation marks, first names only for other players.
+9. **Copy:** follow `docs/COPY.md`. Our own words, data points over sentences, verbs on buttons, no emoji or exclamation marks, first names only for other players.
 
 ### Data
 10. **No backend yet.** Data comes from `src/mock/` until the owner explicitly approves wiring. No network calls, keys or env vars.

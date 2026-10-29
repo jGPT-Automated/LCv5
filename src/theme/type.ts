@@ -48,6 +48,8 @@ type TextStyleDef = { variant: 'body' | 'display' | 'label'; size: FontSize; wei
 
 /** Named text styles. Screens pick one of these by name (docs/DESIGN.md, Type). */
 export const textStyle = {
+  /** Onboarding headline only, e.g. "Find your run." */
+  splash: { variant: 'display', size: 46, weight: 'bold', track: 'tightest', lineHeight: 0.92 },
   pageTitle: { variant: 'display', size: 24, track: 'title' },
   hero: { variant: 'display', size: 28, track: 'tight', lineHeight: 0.95 },
   sheetTitle: { variant: 'display', size: 30, track: 'tight', lineHeight: 0.95 },
@@ -58,6 +60,8 @@ export const textStyle = {
   stat: { variant: 'display', size: 20, track: 'tight' },
   statS: { variant: 'display', size: 16, track: 'tight' },
   rowTitle: { variant: 'body', size: 13, weight: 'semi' },
+  /** Onboarding and empty-page explanations: one or two lines under a headline. */
+  lead: { variant: 'body', size: 15, weight: 'medium', lineHeight: 1.4 },
   body: { variant: 'body', size: 13, weight: 'medium' },
   caption: { variant: 'body', size: 12, weight: 'semi' },
   meta: { variant: 'body', size: 11, weight: 'medium' },

@@ -15,6 +15,7 @@ export function HourBars({
   highlight,
   future = color.futureBar,
   outlineFuture,
+  nowAt = NOW_HOUR,
 }: {
   counts: number[];
   height: number;
@@ -23,14 +24,16 @@ export function HourBars({
   highlight?: number;
   future?: string;
   outlineFuture?: boolean;
+  /** Index of the current hour; -1 for a day that's all ahead. */
+  nowAt?: number;
 }) {
   const max = Math.max(...counts, 1);
   return (
     <View>
       <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: space.xxs, height }}>
         {counts.map((v, i) => {
-          const now = i === NOW_HOUR;
-          const past = i < NOW_HOUR;
+          const now = i === nowAt;
+          const past = i < nowAt;
           const rings: string[] = [];
           if (i === highlight) rings.push(`0 0 0 1.5px ${color.bg}`, `0 0 0 3px ${color.ink}`);
           if (outlineFuture && !past && !now) rings.push(`inset 0 0 0 1px ${color.controlStrong}`);
@@ -53,7 +56,7 @@ export function HourBars({
           // Labels may be wider than their bar, so they overflow the cell centered.
           <View key={i} style={{ flex: 1, alignItems: 'center', overflow: 'visible' }}>
             <View style={{ width: 40, alignItems: 'center' }}>
-              <Text variant="label" size={7.5} track="wide" align="center" tint={i === NOW_HOUR ? color.orangeInk : i === highlight ? color.ink : color.faint}>
+              <Text variant="label" size={7.5} track="wide" align="center" tint={i === nowAt ? color.orangeInk : i === highlight ? color.ink : color.faint}>
                 {l}
               </Text>
             </View>

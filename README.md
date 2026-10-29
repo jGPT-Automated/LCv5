@@ -1,32 +1,42 @@
-# LocalCheck v5 (UI pass)
+# LocalCheck
 
-A clean rebuild of the LocalCheck app UI on Expo SDK 58, built from the official
-`create-expo-app` default template. **UI only:** every screen runs on mock data,
-with no backend and no connection to the existing LocalCheck_Expo app or its services.
+Find a court, see who's there and who's coming, check in, and play. Built with
+Expo SDK 58 and Expo Router.
 
-The source design is `LCPhoneV5` from the Claude Design handoff (LocalCheck_Final).
+## Start here
+
+- `docs/DESIGN.md`: the design system. Every screen is built from it.
+- `docs/COPY.md`: how the app talks.
+- `AGENTS.md`: how work happens in this repo, for people and agents.
+- `docs/ROADMAP.md`: chunks and their status. `docs/DECISIONS.md`: decisions.
 
 ## Run it
 
 ```bash
 npm install
-npm run web          # dev server in the browser
-npm run export:web   # static build in dist/ (what Vercel serves)
-npm run check        # typecheck + design-token check
+npm start            # Expo dev server (iOS, Android, web)
+npm run check        # typecheck + token check + design check
+npm run export:ios   # compile the iOS bundle
 ```
 
-## Preview on Vercel
+## Structure
 
-Import this repo in Vercel. `vercel.json` sets everything: it runs
-`npx expo export --platform web` and serves `dist/` as a single-page app.
-No environment variables are needed.
+```
+src/app/          routes (Expo Router)
+src/screens/      screen bodies
+src/components/   shared components: layout/, ui/, court/, art/
+src/theme/        design tokens
+src/state/        app state
+src/mock/         sample data
+```
 
-The web preview shows layout, color, type and flow. It does **not** show how
-swipes and the drawer feel on a phone; that needs a device build in a later chunk.
+## Data
 
-## Docs
+Everything runs on sample data in `src/mock/` until the backend is wired.
+The app opens signed in; Settings → Sign out shows the signed-out flow, and
+Settings → Sample data switches court load and your tier.
 
-- `docs/ROADMAP.md` chunks and their status
-- `docs/DECISIONS.md` decisions log
-- `docs/chunks/` one record per chunk
-- `AGENTS.md` rules for anyone (human or agent) working here
+## CI
+
+`.github/workflows/ci.yml` runs `npm run check` and an iOS bundle build on
+every pull request.

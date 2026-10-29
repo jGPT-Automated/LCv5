@@ -43,6 +43,10 @@ export const color = {
   orangeLine: 'rgba(252,76,2,0.4)',
   orangeEdge: 'rgba(252,76,2,0.55)',
   orangeGlow: 'rgba(252,76,2,0.7)',
+  /** Brand orange as "r,g,b", for SVG glows (`Glow`). */
+  orangeRGB: '252,76,2',
+  /** Ink as "r,g,b", for a neutral `Glow`. */
+  inkRGB: '242,242,246',
 
   // Hairlines and outlines on dark surfaces (ink at low alpha)
   line: 'rgba(242,242,246,0.06)',
@@ -66,6 +70,8 @@ export const color = {
   pillBg: 'rgba(19,19,23,0.9)',
   inset: 'rgba(12,12,15,0.38)',
   shadow: 'rgba(0,0,0,0.5)',
+  /** Hairline light along the top edge of raised surfaces (cards, sheets). */
+  topHighlight: 'rgba(255,255,255,0.03)',
 } as const;
 
 /** Heat scale for planned visits (empty → busiest). */
@@ -151,6 +157,8 @@ export const radius = {
   hero: 18,
   profile: 22,
   sheet: 25,
+  /** Morphing modal card (beUI). */
+  modal: 36,
   pill: 999,
 } as const;
 
@@ -164,14 +172,52 @@ export const font = {
   bodyHeavy: 'Inter_800ExtraBold',
 } as const;
 
-/** Standard screen insets from the design: header at 54pt, tab bar 84pt. */
+/** Insets and limits that aren't element sizes (heights live in `size`). */
 export const layout = {
   statusBar: 54,
-  headerHeight: 52,
-  tabBarHeight: 84,
   maxWebWidth: 430,
   /** Space under sheet content for the home indicator. */
   sheetBottom: 34,
   /** Extra scroll room so the earliest timeline rows can reach the focus line. */
   timelineTail: 330,
+} as const;
+
+/** Fixed heights and widths. Screens use these instead of numbers (docs/DESIGN.md). */
+export const size = {
+  dot: 6,
+  dotSm: 5,
+  compact: 36,
+  button: 44,
+  large: 50,
+  field: 42,
+  segment: 32,
+  tab: 42,
+  row: 56,
+  empty: 48,
+  cell: 34,
+  header: 52,
+  tabBar: 84,
+  barChart: 40,
+  barChartSm: 34,
+  weekChart: 56,
+  progress: 4,
+  menu: 236,
+  /** Width of the day/time label column in grids. */
+  gridLabel: 28,
+  /** Width of the date block in game rows. */
+  dateBlock: 58,
+  /** Width of a time label in timeline rows. */
+  timeLabel: 36,
+  /** Width of a rank number in leaderboard rows. */
+  rankLabel: 22,
+  /** Height of an illustration banner at the top of a page. */
+  artBanner: 260,
+  /** Close and back buttons in a modal header. */
+  modalButton: 32,
+  /** The panel under the schedule grid. */
+  schedPanel: 140,
+  /** Day header cells above the schedule grid. */
+  dayHead: 38,
+  /** Your-plans underline on a grid cell. */
+  underline: 3,
 } as const;

@@ -46,8 +46,10 @@
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
     "check:tokens": "node scripts/check-tokens.mjs",
+    "check:design": "node scripts/check-design-system.mjs",
+    "test:design": "node --test scripts/check-design-system.test.mjs",
     "export:web": "expo export --platform web",
-    "check": "npm run typecheck && npm run check:tokens"
+    "check": "npm run typecheck && npm run check:tokens && npm run check:design && npm run test:design"
   },
   "private": true
 }

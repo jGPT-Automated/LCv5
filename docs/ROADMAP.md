@@ -18,3 +18,6 @@ Status values: Planned, In progress, In review, Approved.
 
 LC+ hosted Expo Go preview: In progress. A dedicated GitHub branch publishes
 both platforms to the separate LC+ EAS project; no native build is requested.
+
+Design-system audit and reuse contract: In review.
+See [contract and enforcement](chunks/02-design-contract.md).

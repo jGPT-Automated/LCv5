@@ -13,3 +13,12 @@ One line per decision, newest last. Agents read this before changing anything.
 - **D9** (2026-10-26) Not built in chunk 1, kept off screen instead of shown as dead buttons: Log game, New game sheet, Schedule grid, Compete page. Schedule and Compete tabs show a placeholder.
 - **D10** (2026-10-26) Me page gets Activity / Friends / Inbox tabs (owner liked the tabs in the current app). Inbox mocks friend requests (Accept / Decline), score confirmations (Approve / Dispute) and game invites (Join / Skip).
 - **D11** (2026-10-26) Settings has a "Preview data" section to switch mock court load (empty / normal / packed) and your tier, so every state can be reviewed on the web preview.
+- **D12** (2026-10-28) The isolated Expo Go preview is named `LC+`, with slug and URL scheme `lcplus`. Do not link this checkout to another app's EAS project, publish updates, or replace existing app resources.
+# LC+ hosted preview delivery
+
+Owner authorized EAS publishing for LC+ separately from the original app.
+Use GitHub Actions and project 4ca1add1-31b6-492a-8c84-f8c1b32264aa,
+branch lcplus-preview and environment preview, for iOS and Android. This needs
+no native build. Repository-scoped EXPO_TOKEN authenticates the runner.
+No original LocalCheck project or repository is changed.
+

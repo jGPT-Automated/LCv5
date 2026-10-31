@@ -15,3 +15,6 @@ the owner says so.
 | 7+ | Wire real data, read-only first. Only after the owner approves the UI. | Not started | |
 
 Status values: Planned, In progress, In review, Approved.
+
+LC+ hosted Expo Go preview: In progress. A dedicated GitHub branch publishes
+both platforms to the separate LC+ EAS project; no native build is requested.

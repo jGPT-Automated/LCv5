@@ -1,0 +1,38 @@
+name: LC+ Expo Go preview
+on:
+  push:
+    branches: [codex/lcplus-expo-go-preview]
+permissions:
+  contents: read
+concurrency:
+  group: lcplus-preview
+  cancel-in-progress: false
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Verify isolated LC+ target
+        run: |
+          node -e 'const c=require("./app.json").expo; if(c.name!=="LC+" || c.slug!=="lcplus" || c.extra.eas.projectId!=="4ca1add1-31b6-492a-8c84-f8c1b32264aa" || c.updates.url!=="https://u.expo.dev/4ca1add1-31b6-492a-8c84-f8c1b32264aa") process.exit(1)'
+      - run: npm run check
+      - run: npm run export:web
+      - name: Report existing lint findings
+        continue-on-error: true
+        run: npm run lint
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Publish LC+ for iOS and Android
+        run: eas update --branch lcplus-preview --platform all --environment preview --message "LC+ Expo Go preview · $GITHUB_SHA" --non-interactive --json > update-result.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lcplus-preview-result
+          path: update-result.json

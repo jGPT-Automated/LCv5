@@ -33,6 +33,10 @@ Schedule grid, Compete, Log game, New game, game screen, real map, real data, de
 - ESLint not set up: `expo lint` needs network access to install its config, which this build environment blocks.
 
 ## Owner feedback
+Hosted-preview follow-up: publish LC+ from a GitHub runner to its own EAS
+project. Run typecheck, token checks and web export before publication. Existing
+sheet lint findings remain visible and do not represent native runtime testing.
+
 _(to fill in after review)_
 
 ## Screens (Chromium, 402×874)

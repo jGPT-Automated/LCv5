@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "LocalCheck v5",
-    "slug": "lcv5",
+    "name": "LC+",
+    "slug": "lcplus",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "lcv5",
+    "scheme": "lcplus",
     "userInterfaceStyle": "dark",
     "ios": {
       "icon": "./assets/expo.icon"
@@ -39,6 +39,23 @@
       "typedRoutes": true,
       "reactCompiler": true
     },
-    "backgroundColor": "#0d0d10"
+    "backgroundColor": "#0d0d10",
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "4ca1add1-31b6-492a-8c84-f8c1b32264aa"
+      }
+    },
+    "owner": "agenticjess-os",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/4ca1add1-31b6-492a-8c84-f8c1b32264aa"
+    }
   }
 }

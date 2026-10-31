@@ -14,11 +14,5 @@ One line per decision, newest last. Agents read this before changing anything.
 - **D10** (2026-10-26) Me page gets Activity / Friends / Inbox tabs (owner liked the tabs in the current app). Inbox mocks friend requests (Accept / Decline), score confirmations (Approve / Dispute) and game invites (Join / Skip).
 - **D11** (2026-10-26) Settings has a "Preview data" section to switch mock court load (empty / normal / packed) and your tier, so every state can be reviewed on the web preview.
 - **D12** (2026-10-28) The isolated Expo Go preview is named `LC+`, with slug and URL scheme `lcplus`. Do not link this checkout to another app's EAS project, publish updates, or replace existing app resources.
-# LC+ hosted preview delivery
-
-Owner authorized EAS publishing for LC+ separately from the original app.
-Use GitHub Actions and project 4ca1add1-31b6-492a-8c84-f8c1b32264aa,
-branch lcplus-preview and environment preview, for iOS and Android. This needs
-no native build. Repository-scoped EXPO_TOKEN authenticates the runner.
-No original LocalCheck project or repository is changed.
-
+- **D13** (2026-10-31) Owner authorized hosted EAS previews for LC+ only, superseding D12's publishing restriction for this project. GitHub Actions targets project `4ca1add1-31b6-492a-8c84-f8c1b32264aa`, branch `lcplus-preview`, environment `preview`, both platforms. Repository-scoped EXPO_TOKEN authenticates the runner. No native build or original LocalCheck resource is changed.
+- **D14** (2026-10-31) Keep the current theme and shared APIs. `docs/DESIGN_SYSTEM.md` owns reuse, layout references and extension rules; the audit records defects that must not become precedents. PRs identify their reference page and reused components. `npm run check` enforces primitive/typography ownership with regression tests. Home's two existing native Pressable usages may shrink but not grow; new adapters require a contract/decision update. No visual redesign is bundled with this contract.

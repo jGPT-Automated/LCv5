@@ -44,9 +44,16 @@ Docs: https://docs.expo.dev/eas/index.md
 
 These override anything above where they conflict.
 
-1. **UI only, no backend.** This repo has no Supabase, no API calls, no EAS updates and no connection to the LocalCheck_Expo repo or its services. All data is mock data in `src/mock/`. Do not add network calls, keys or env vars until the owner explicitly says so.
+1. **UI data remains mock.** All product data is in `src/mock/`; backend integration requires owner authorization. Hosted EAS previews are authorized for the separate LC+ project only (D13). Keep the LocalCheck_Expo repository, project and services untouched.
 2. **Tokens only.** Colors, spacing, radius and type sizes come from `src/theme`. `npm run check:tokens` fails on raw values. Add a token before adding a one-off value, and log it in `docs/DECISIONS.md`.
 3. **Use the shared pieces.** `Text`, `Button`, `Segmented`, `Avatar`, `Sheet`, `Glow`, `PageHeader`, `Screen` live in `src/components`. Don't restyle them inline per screen.
+   **Design contract:** Before changing a screen, component, visual token,
+   interaction or navigation pattern, read `docs/DESIGN_SYSTEM.md`. Name the
+   closest existing page and reused components in the PR. Extend shared owners
+   rather than copying them. Read `docs/DESIGN_SYSTEM_AUDIT.md` when touching an
+   existing pattern so known defects are not copied as precedent. UI changes
+   need a reference-page comparison and iOS/Android verification evidence;
+   explicitly mark unavailable verification pending.
 4. **One chunk per PR.** Each PR updates `docs/ROADMAP.md` (status), its `docs/chunks/NN-*.md` file, and `docs/DECISIONS.md` for any choice made.
 5. **Before pushing:** `npm run check` (typecheck + token check) and `npm run export:web` must pass.
 6. **Copy rules:** plain language, no emoji, no exclamation marks, first names only for other players.

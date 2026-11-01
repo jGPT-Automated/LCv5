@@ -5,6 +5,7 @@
 import type { Tier } from '@/theme';
 
 import {
+  courtIds,
   courts,
   days,
   dayNums,
@@ -21,11 +22,14 @@ import {
   type MeTier,
   type Player,
 } from './data';
+import type { Friendship } from './social';
 
 export type PlayerView = Player & { rank?: number; live?: boolean };
 
 export type MockState = {
   checkedAt: CourtId | null;
+  /** Friend status per player id; overrides the seed `friend` flag. */
+  friendships: Record<string, Friendship>;
   mine: CourtId[];
   going: Record<string, boolean>;
   games: Record<CourtId, Game[]>;
@@ -107,13 +111,20 @@ export function derive(s: MockState) {
   ];
   const view = (c: CourtId) => {
     const live = new Set(livePeople(c).map((p) => p.i));
-    return (p: Player): PlayerView => ({ ...p, rank: rankOf[p.i], live: live.has(p.i) });
+    return (p: Player): PlayerView => ({ ...p, friend: !p.me && s.friendships[p.i] === 'friend', rank: rankOf[p.i], live: live.has(p.i) });
   };
+  const anyLive = new Set(courtIds.flatMap((c) => livePeople(c).map((p) => p.i)));
+  /** A player as shown anywhere outside a court page: live means on any court. */
+  const viewP = (p: Player): PlayerView => ({ ...p, friend: !p.me && s.friendships[p.i] === 'friend', rank: rankOf[p.i], live: anyLive.has(p.i) });
   const gamesThisWeek = (c: CourtId) => s.games[c].filter((g) => g.d >= TODAY).length;
   /** Today's activity per hour: who checked in (past), who's on now, who's going (later). */
   const todayCounts = (c: CourtId) => Array.from({ length: HOURS }, (_, i) => (i === NOW_HOUR ? liveCount(c) : Math.round(base(TODAY, i) * courts[c].f * LF)));
 
-  return { you, rankOf, liveCount, livePeople, gameAt, plannedCount, crowd, view, gamesThisWeek, todayCounts };
+  return { you, rankOf, liveCount, livePeople, gameAt, plannedCount, crowd, view, viewP, gamesThisWeek, todayCounts };
 }
 
 export type Derived = ReturnType<typeof derive>;
+
+/** "Cheviot Hills · 0.4 mi" → neighborhood and distance, shown in different spots. */
+export const courtPlace = (c: CourtId) => courts[c].area.split(' · ')[0];
+export const courtDistance = (c: CourtId) => courts[c].area.split(' · ')[1] ?? '';

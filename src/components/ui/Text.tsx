@@ -1,20 +1,22 @@
 import { Text as RNText, type TextProps as RNTextProps, type TextStyle } from 'react-native';
 
-import { bodyFamily, color, displayFamily, tracking, type FontSize, type Tracking, type Weight } from '@/theme';
+import { bodyFamily, color, displayFamily, textStyle, tracking, type FontSize, type TextStyleName, type Tracking, type Weight } from '@/theme';
 
 type Variant = 'body' | 'display' | 'label';
 
 export type TextProps = Omit<RNTextProps, 'style'> & {
-  /** body: Inter. display: Oswald, uppercase. label: Inter heavy, uppercase, tracked. */
+  /** Named style from docs/DESIGN.md. Screens use only this. */
+  t?: TextStyleName;
+  /** Low-level overrides, for components in src/components only. */
   variant?: Variant;
-  size: FontSize;
+  size?: FontSize;
   weight?: Weight;
+  track?: Tracking;
+  lineHeight?: number;
   /** A token value from `color`, `tier`, `sport`. */
   tint?: string;
-  track?: Tracking;
   upper?: boolean;
   align?: TextStyle['textAlign'];
-  lineHeight?: number;
   style?: TextStyle;
 };
 
@@ -24,22 +26,26 @@ const defaults: Record<Variant, { weight: Weight; upper: boolean }> = {
   label: { weight: 'heavy', upper: true },
 };
 
-export function Text({ variant = 'body', size, weight, tint = color.ink, track, upper, align, lineHeight, style, ...rest }: TextProps) {
-  const d = defaults[variant];
-  const w = weight ?? d.weight;
-  const t = track ?? (variant === 'label' ? (size >= 10 ? 'caps' : 'label') : 'none');
+export function Text({ t, variant, size, weight, track, lineHeight, tint = color.ink, upper, align, style, ...rest }: TextProps) {
+  const named: { variant?: Variant; size?: FontSize; weight?: Weight; track?: Tracking; lineHeight?: number } = t ? textStyle[t] : {};
+  const v = variant ?? named.variant ?? 'body';
+  const sz = size ?? named.size ?? 13;
+  const d = defaults[v];
+  const w = weight ?? named.weight ?? d.weight;
+  const tr = track ?? named.track ?? (v === 'label' ? (sz >= 10 ? 'caps' : 'label') : 'none');
+  const lh = lineHeight ?? named.lineHeight;
   return (
     <RNText
       {...rest}
       style={[
         {
-          fontFamily: variant === 'display' ? displayFamily[w] : bodyFamily[w],
-          fontSize: size,
+          fontFamily: v === 'display' ? displayFamily[w] : bodyFamily[w],
+          fontSize: sz,
           color: tint,
-          letterSpacing: tracking[t] * size,
+          letterSpacing: tracking[tr] * sz,
           textTransform: (upper ?? d.upper) ? 'uppercase' : 'none',
           textAlign: align,
-          lineHeight: lineHeight ? lineHeight * size : undefined,
+          lineHeight: lh ? lh * sz : undefined,
         },
         style,
       ]}

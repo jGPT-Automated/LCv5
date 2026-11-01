@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "LocalCheck v5",
-    "slug": "lcv5",
+    "slug": "lc",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -33,12 +33,32 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "LocalCheck uses your location to show courts near you and to check you in when you tap Check in.",
+          "locationAlwaysAndWhenInUsePermission": "With auto check-in on, LocalCheck checks you in when you arrive at your saved courts and out when you leave.",
+          "isIosBackgroundLocationEnabled": true
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
     },
-    "backgroundColor": "#0d0d10"
+    "backgroundColor": "#0d0d10",
+    "owner": "jesstests",
+    "extra": {
+      "eas": {
+        "projectId": "2762f250-b9b9-4377-b706-5d0645882a4d"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/2762f250-b9b9-4377-b706-5d0645882a4d"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    }
   }
 }

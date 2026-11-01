@@ -1,3 +1,3 @@
-import { MeScreen } from '@/features/me/MeScreen';
+import { MeScreen } from '@/screens/me/MeScreen';
 
 export default MeScreen;

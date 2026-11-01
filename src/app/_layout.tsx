@@ -37,8 +37,17 @@ export default function RootLayout() {
             <OverlayHost>
               <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: color.bg } }}>
                 <Stack.Screen name="(tabs)" />
+                {/* Sign-in and setup: no swipe back out of the flow. */}
+                <Stack.Screen name="welcome" options={{ animation: 'fade', gestureEnabled: false }} />
+                <Stack.Screen name="sign-in" />
+                <Stack.Screen name="onboarding" options={{ gestureEnabled: false }} />
+                {/* Pushed pages keep the standard edge swipe back (no full-screen swipe; it fights vertical scrolling). */}
                 <Stack.Screen name="settings" />
                 <Stack.Screen name="court/[id]" />
+                <Stack.Screen name="player/[id]" />
+                <Stack.Screen name="game/[id]" />
+                <Stack.Screen name="log-game" />
+                <Stack.Screen name="add-court" />
               </Stack>
             </OverlayHost>
           </View>

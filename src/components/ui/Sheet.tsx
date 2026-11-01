@@ -4,7 +4,7 @@ import { GestureDetector, usePanGesture } from 'react-native-gesture-handler';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
-import { color, layout, radius, space } from '@/theme';
+import { color, layout, radius, space, spring, timing } from '@/theme';
 
 /**
  * Bottom drawer.
@@ -14,7 +14,7 @@ import { color, layout, radius, space } from '@/theme';
  * - Dragging up rubber-bands instead of tearing away from the bottom edge.
  * - Tapping the scrim or the grab bar closes it.
  */
-const SPRING = { damping: 30, stiffness: 320, mass: 0.9 };
+
 const OFF = 1200;
 
 export function Sheet({
@@ -41,10 +41,10 @@ export function Sheet({
       // Re-opening: height is already known, so animate from just off-screen.
       if (h.value !== OFF) {
         y.value = h.value;
-        y.value = withSpring(0, SPRING);
+        y.value = withSpring(0, spring.sheet);
       }
     } else {
-      y.value = withTiming(h.value, { duration: 220 }, (done) => {
+      y.value = withTiming(h.value, timing.exit, (done) => {
         if (done) scheduleOnRN(setMounted, false);
       });
     }
@@ -56,7 +56,7 @@ export function Sheet({
     h.value = e.nativeEvent.layout.height;
     if (first && open) {
       y.value = h.value;
-      y.value = withSpring(0, SPRING);
+      y.value = withSpring(0, spring.sheet);
     }
   };
 
@@ -72,10 +72,10 @@ export function Sheet({
       'worklet';
       const shouldClose = y.value > h.value * 0.3 || e.velocityY > 800;
       if (shouldClose) {
-        y.value = withSpring(h.value, { ...SPRING, velocity: e.velocityY });
+        y.value = withSpring(h.value, { ...spring.sheet, velocity: e.velocityY });
         scheduleOnRN(onClose);
       } else {
-        y.value = withSpring(0, { ...SPRING, velocity: e.velocityY });
+        y.value = withSpring(0, { ...spring.sheet, velocity: e.velocityY });
       }
     },
   });
@@ -107,7 +107,7 @@ export function Sheet({
               borderTopWidth: 1,
               borderColor: color.borderStrong,
               overflow: 'hidden',
-              boxShadow: `0 -30px 90px ${color.shadow}`,
+              boxShadow: `inset 0 1px 0 ${color.topHighlight}, 0 -30px 90px ${color.shadow}`,
             },
             sheetStyle,
           ]}>

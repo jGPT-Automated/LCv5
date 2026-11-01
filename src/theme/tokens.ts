@@ -203,7 +203,7 @@ export const size = {
   progress: 4,
   menu: 236,
   /** Width of the day/time label column in grids. */
-  gridLabel: 28,
+  gridLabel: 34,
   /** Width of the date block in game rows. */
   dateBlock: 58,
   /** Width of a time label in timeline rows. */
@@ -217,7 +217,7 @@ export const size = {
   /** The panel under the schedule grid. */
   schedPanel: 140,
   /** Day header cells above the schedule grid. */
-  dayHead: 38,
+  dayHead: 36,
   /** Your-plans underline on a grid cell. */
   underline: 3,
 } as const;

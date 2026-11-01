@@ -1,5 +1,5 @@
 import type { ReactNode, Ref } from 'react';
-import { ScrollView, type NativeScrollEvent, type NativeSyntheticEvent, type ScrollViewInstance } from 'react-native';
+import { ScrollView, View, type NativeScrollEvent, type NativeSyntheticEvent, type ScrollViewInstance } from 'react-native';
 
 import { space } from '@/theme';
 
@@ -32,4 +32,12 @@ export function PageScroll({
       {children}
     </ScrollView>
   );
+}
+
+/**
+ * A body block that doesn't scroll, with the same 20pt gutter as PageScroll.
+ * `grow` fills the space left over (a grid); otherwise it hugs its content.
+ */
+export function PageFixed({ children, grow, top = space.l, bottom = 0 }: { children: ReactNode; grow?: boolean; top?: number; bottom?: number }) {
+  return <View style={{ flex: grow ? 1 : undefined, paddingHorizontal: space.gutter, paddingTop: top, paddingBottom: bottom }}>{children}</View>;
 }

@@ -8,6 +8,7 @@
 # attempts in a row so it can't loop forever; it says so when it does.
 cd "$(git rev-parse --show-toplevel)" || exit 0
 state=.render-cache; mkdir -p "$state"
+echo "$(date -u +%FT%TZ) stop hook ran" >> "$state/hook.log"
 sig=$( (git diff HEAD; git ls-files -o --exclude-standard | xargs -r cat) 2>/dev/null | sha1sum | cut -d' ' -f1)
 [ "$(cat $state/passed 2>/dev/null)" = "$sig" ] && exit 0
 tries=$(cat $state/tries 2>/dev/null || echo 0)

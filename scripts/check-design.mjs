@@ -18,6 +18,16 @@ const STYLE_KEYS = /\b(borderRadius|borderTopLeftRadius|borderTopRightRadius|fon
 const RAW_SIZE = /\b(height|minHeight|maxHeight|width|minWidth)\s*:\s*[1-9]/;
 const TEXT_SIZE = /<Text\b[^>]*?\b(size|variant)=/s;
 
+// Layout belongs in shared components. Screens may not add their own flex,
+// gap, padding or margin. Files that predate this rule have a count in
+// scripts/design-layout-baseline.json that can only go down; a file not in it
+// must have none.
+const LAYOUT = /\b(flexDirection|justifyContent|alignItems|gap|padding\w*|margin\w*)\s*:/;
+const baselinePath = path.join(path.dirname(new URL(import.meta.url).pathname), 'design-layout-baseline.json');
+const baseline = fs.existsSync(baselinePath) ? JSON.parse(fs.readFileSync(baselinePath, 'utf8')) : {};
+const writeBaseline = process.argv.includes('--write-baseline');
+const counts = {};
+
 const files = [];
 function walk(dir) {
   if (!fs.existsSync(dir)) return;
@@ -53,6 +63,7 @@ for (const f of files) {
     const line = src.slice(0, m.index).split('\n').length;
     if (!/design-ok:/.test(lines[line - 1])) problems.push(`${rel}:${line}  <Text> with size/variant → use t="…" (DESIGN.md, Type)`);
   }
+  counts[rel] = lines.filter((l) => !/design-ok:/.test(l) && LAYOUT.test(l)).length;
   lines.forEach((l, i) => {
     if (/design-ok:/.test(l)) return;
     const where = `${rel}:${i + 1}`;
@@ -63,6 +74,16 @@ for (const f of files) {
   });
 }
 
+if (writeBaseline) {
+  const out = Object.fromEntries(Object.entries(counts).filter(([, n]) => n > 0).sort());
+  fs.writeFileSync(baselinePath, JSON.stringify(out, null, 2) + '\n');
+  console.log('Wrote layout baseline for ' + Object.keys(out).length + ' files.');
+  process.exit(0);
+}
+for (const [rel, n] of Object.entries(counts)) {
+  const allowed = baseline[rel] ?? 0;
+  if (n > allowed) problems.push(`${rel}  ${n} layout style lines (flex/gap/padding/margin), allowed ${allowed} → build the layout from shared components (Section, Row, PageFixed, StatusCard…)`);
+}
 if (problems.length) {
   console.error(`Design check failed (${problems.length}):\n` + problems.join('\n'));
   process.exit(1);

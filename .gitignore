@@ -44,3 +44,4 @@ example
 
 # iOS bundle check output
 dist-ios/
+.render-cache/

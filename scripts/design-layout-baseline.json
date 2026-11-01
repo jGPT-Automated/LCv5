@@ -1,0 +1,23 @@
+{
+  "src/screens/compete/CompeteScreen.tsx": 10,
+  "src/screens/compete/LogGameScreen.tsx": 12,
+  "src/screens/explore/AddCourtScreen.tsx": 5,
+  "src/screens/explore/CourtCard.tsx": 5,
+  "src/screens/explore/CourtDrawer.tsx": 6,
+  "src/screens/explore/ExploreScreen.tsx": 4,
+  "src/screens/game/GameScreen.tsx": 6,
+  "src/screens/home/ActivityTab.tsx": 1,
+  "src/screens/home/CourtHero.tsx": 6,
+  "src/screens/home/DashboardScreen.tsx": 3,
+  "src/screens/home/HomeScreen.tsx": 2,
+  "src/screens/home/PartnerPicker.tsx": 1,
+  "src/screens/home/TodayTab.tsx": 10,
+  "src/screens/home/WeekTab.tsx": 1,
+  "src/screens/me/Inbox.tsx": 8,
+  "src/screens/me/MeScreen.tsx": 2,
+  "src/screens/onboarding/SignInScreen.tsx": 1,
+  "src/screens/player/PlayerScreen.tsx": 5,
+  "src/screens/player/QuickLog.tsx": 6,
+  "src/screens/schedule/NewGameSheet.tsx": 6,
+  "src/screens/settings/SettingsScreen.tsx": 4
+}
